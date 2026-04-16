@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Verify Your Email - ShieldIQ</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333">
+    <h2 style="color: #2c3e50">
+      Verify Your Email to Activate Your ShieldIQ Account
+    </h2>
+
+    <p>Hi {{ name }},</p>
+
+    <p>
+      Welcome to <strong>ShieldIQ</strong> — your cybersecurity awareness and
+      phishing simulation platform.
+    </p>
+
+    <p>
+      To complete your registration and secure your account, please verify your
+      email address by clicking the button below:
+    </p>
+
+    <p style="margin: 20px 0">
+      <a
+        href="{{ verify_url }}"
+        style="
+          padding: 12px 24px;
+          background-color: #1a73e8;
+          color: #ffffff;
+          text-decoration: none;
+          border-radius: 5px;
+          display: inline-block;
+          font-weight: bold;
+        "
+      >
+        Verify Email Address
+      </a>
+    </p>
+
+    <p>
+      <strong>Note:</strong> This verification link will expire in {{
+      expiry_hours }} hours for security reasons.
+    </p>
+
+    <p>
+      If the button above does not work, you can copy and paste the following
+      link into your browser:
+    </p>
+
+    <p style="word-break: break-all">{{ verify_url }}</p>
+
+    <hr style="margin: 30px 0" />
+
+    <p style="font-size: 14px; color: #555">
+      If you did not create a ShieldIQ account, please ignore this email. No
+      further action is required.
+    </p>
+
+    <p style="font-size: 14px; color: #555">
+      For security reasons, never share this link with anyone.
+    </p>
+
+    <p>Stay secure,<br /><strong>The ShieldIQ Team</strong></p>
+  </body>
+</html>

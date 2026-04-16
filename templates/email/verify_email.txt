@@ -1,0 +1,15 @@
+Hi {{ name }},
+
+Welcome to ShieldIQ — your cybersecurity awareness and phishing simulation platform.
+
+To complete your registration and secure your account, please verify your email address by clicking the button below:
+
+{{ verify_url }}
+
+Note: This verification link will expire in {{ expiry_hours }} hours for security reasons.
+
+For security reasons, never share this link with anyone.
+
+
+Stay secure,
+The ShieldIQ Team
