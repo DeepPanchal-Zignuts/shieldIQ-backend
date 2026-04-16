@@ -142,8 +142,15 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 # Email Sending Configuration
 # ──────────────────────────────────────────────────────────────
 # Dev only - replace in production
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "noreply@example.com")
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 465))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "False").lower() == "true"
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "True").lower() == "true"
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
 
 # ──────────────────────────────────────────────────────────────
@@ -175,23 +182,17 @@ REST_FRAMEWORK = {
 # Token / Auth Configuration
 # ──────────────────────────────────────────────────────────────
 ACCESS_TOKEN_LIFETIME = timedelta(
-    hours=int(os.environ.get("ACCESS_TOKEN_LIFETIME_HOURS", 24))
+    hours=int(os.environ.get("ACCESS_TOKEN_LIFETIME_HOURS"))
 )
 REFRESH_TOKEN_LIFETIME = timedelta(
-    days=int(os.environ.get("REFRESH_TOKEN_LIFETIME_DAYS", 60))
+    days=int(os.environ.get("REFRESH_TOKEN_LIFETIME_DAYS"))
 )
 EMAIL_VERIFICATION_TOKEN_LIFETIME = timedelta(
-    hours=int(os.environ.get("EMAIL_VERIFICATION_TOKEN_LIFETIME_HOURS", 24))
+    hours=int(os.environ.get("EMAIL_VERIFICATION_TOKEN_LIFETIME_HOURS"))
 )
 FORGOT_PASSWORD_TOKEN_LIFETIME = timedelta(
-    hours=int(os.environ.get("FORGOT_PASSWORD_TOKEN_LIFETIME_HOURS", 1))
+    hours=int(os.environ.get("FORGOT_PASSWORD_TOKEN_LIFETIME_HOURS"))
 )
 
-ACCESS_SECRET_KEY = os.environ.get(
-    "ACCESS_TOKEN_SECRET_KEY",
-    "django-insecure-change-me-in-production-env-variable",
-)
-REFRESH_SECRET_KEY = os.environ.get(
-    "REFRESH_TOKEN_SECRET_KEY",
-    "django-insecure-change-me-in-production-env-variable",
-)
+ACCESS_SECRET_KEY = os.environ.get("ACCESS_TOKEN_SECRET_KEY")
+REFRESH_SECRET_KEY = os.environ.get("REFRESH_TOKEN_SECRET_KEY")
