@@ -44,7 +44,6 @@ class AuthService:
             password=data["password"],
             department=data.get("department", ""),
             security_score=0,
-            is_staff=True,
         )
 
         # Generate email verification token and send email
@@ -250,7 +249,6 @@ class AuthService:
                     error_code=ErrorCodes.NOT_FOUND,
                 )
 
-            print("User logged out successfully: ", user)
             UserRepository.update_fields(
                 user,
                 access_token=None,

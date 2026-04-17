@@ -55,6 +55,7 @@ class UserMessages:
     USER_WITH_EMAIL_ALREADY_EXISTS = "A user with this email already exists."
     EMAIL_SENDING_FAILED = "Failed to send verification email to {}"
     USER_PROFILE_SUCCESS = "User details Fetched Successfully."
+    USERS_FETCH_SUCCESS = "Users fetched Successfully."
 
 
 class PermissionMessages:

@@ -1,5 +1,7 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 from uuid import UUID
+
+from django.db.models import Q, QuerySet
 from apps.users.models.user_model import User
 from apps.users.repositories.base_repository import BaseRepository
 from utils import date_utils
@@ -53,3 +55,33 @@ class UserRepository(BaseRepository):
             },
             raise_exception=raise_exception,
         )
+
+    @classmethod
+    def get_all_users(
+        cls,
+        filters: Dict[str, Any] = None,
+    ) -> QuerySet[User]:
+        # Define the filters to be applied to the queryset.
+        filters = filters or {}
+
+        # Create a queryset to fetch all the records from the db.
+        queryset = cls.model.objects.all()
+
+        # Apply the is_deleted=false filter by default.
+        queryset = queryset.filter(is_deleted=False, is_staff=False)
+
+        # Search based on the incoming filter.
+        search = filters.get("search")
+        if search:
+            queryset = queryset.filter(
+                Q(email__icontains=search) | Q(full_name__icontains=search)
+            )
+
+        # Apply additional filters if provided.
+        if filters.get("is_active") is not None:
+            queryset = queryset.filter(is_active=filters["is_active"])
+
+        if filters.get("is_email_verified") is not None:
+            queryset = queryset.filter(is_email_verified=filters["is_email_verified"])
+
+        return queryset.order_by("-created_at")

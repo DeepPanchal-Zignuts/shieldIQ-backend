@@ -283,7 +283,7 @@ curl -s -X POST http://localhost:8000/api/v1/auth/register/ \
       "full_name": "Alice Johnson",
       "is_email_verified": false,
       "is_active": true,
-      "is_staff": true,
+      "is_staff": false,
       "department": "engineering",
       "security_score": 0,
       "created_at": "2026-04-16T12:00:00+0000",
