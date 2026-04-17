@@ -20,5 +20,5 @@ from django.urls import path, include
 
 # Root url patterns
 urlpatterns = [
-    path("api/v1/", include("apps.users.urls.auth_urls")),
+    path("api/v1/", include("apps.users.urls.base_urls")),
 ]

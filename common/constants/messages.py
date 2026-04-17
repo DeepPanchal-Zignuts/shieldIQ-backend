@@ -54,6 +54,7 @@ class UserMessages:
     USER_DELETED = "User deleted successfully"
     USER_WITH_EMAIL_ALREADY_EXISTS = "A user with this email already exists."
     EMAIL_SENDING_FAILED = "Failed to send verification email to {}"
+    USER_PROFILE_SUCCESS = "User details Fetched Successfully."
 
 
 class PermissionMessages:
