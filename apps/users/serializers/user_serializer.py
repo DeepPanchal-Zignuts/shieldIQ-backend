@@ -72,6 +72,25 @@ class UserResponseSerializer(serializers.Serializer):
     last_login_at = serializers.DateTimeField()
 
 
+class UserDetailedResponseSerializer(serializers.Serializer):
+    """Serializes user data for API responses."""
+
+    id = serializers.UUIDField()
+    email = serializers.EmailField()
+    full_name = serializers.CharField()
+    is_email_verified = serializers.BooleanField()
+    is_active = serializers.BooleanField()
+    is_staff = serializers.BooleanField()
+    is_superuser = serializers.BooleanField()
+    department = serializers.ChoiceField(
+        choices=constants.DepartmentEnum.choices, allow_null=True
+    )
+    security_score = serializers.IntegerField()
+    created_at = serializers.DateTimeField()
+    updated_at = serializers.DateTimeField()
+    last_login_at = serializers.DateTimeField()
+
+
 class AuthTokenResponseSerializer(serializers.Serializer):
     """Serializes token pair returned on login/register."""
 
@@ -89,3 +108,7 @@ class LoginResponseSerializer(serializers.Serializer):
 
     user = UserResponseSerializer()
     tokens = AuthTokenResponseSerializer()
+
+
+class UserProfileDetailsResponseSerializer(serializers.Serializer):
+    user = UserDetailedResponseSerializer()

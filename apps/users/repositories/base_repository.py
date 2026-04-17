@@ -1,6 +1,7 @@
 # Generic repository providing standard database operations.
 from typing import Optional, Type
 from django.db import models
+from uuid import UUID
 from common.exceptions.custom_exceptions import NotFoundException
 from common.constants.error_code import ErrorCodes
 
@@ -24,6 +25,21 @@ class BaseRepository:
             if raise_exception:
                 raise NotFoundException(
                     message=f"{cls.model.__name__} not found.",
+                    error_code=ErrorCodes.NOT_FOUND,
+                )
+            return None
+
+    @classmethod
+    def get_by_id(
+        cls, record_id: UUID, raise_exception: bool = True
+    ) -> Optional[models.Model]:
+        """Retrieve a single record by primary key."""
+        try:
+            return cls.model.objects.get(pk=record_id)
+        except cls.model.DoesNotExist:
+            if raise_exception:
+                raise NotFoundException(
+                    message=f"{cls.model.__name__} with id '{record_id}' not found.",
                     error_code=ErrorCodes.NOT_FOUND,
                 )
             return None
