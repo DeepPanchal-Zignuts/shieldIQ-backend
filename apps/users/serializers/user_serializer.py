@@ -49,6 +49,14 @@ class ResetPasswordSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, min_length=8, write_only=True)
 
 
+class UserListRequestSerializer(serializers.Serializer):
+    search = serializers.CharField(required=False, allow_blank=True, default=None)
+    is_active = serializers.BooleanField(required=False, allow_null=True, default=None)
+    is_email_verified = serializers.BooleanField(
+        required=False, allow_null=True, default=None
+    )
+
+
 # ══════════════════════════════════════════════════════════════
 # Response Serializers (output formatting)
 # ══════════════════════════════════════════════════════════════
@@ -112,3 +120,7 @@ class LoginResponseSerializer(serializers.Serializer):
 
 class UserProfileDetailsResponseSerializer(serializers.Serializer):
     user = UserDetailedResponseSerializer()
+
+
+class UserListResponseSerializer(serializers.Serializer):
+    users = UserResponseSerializer(many=True)
