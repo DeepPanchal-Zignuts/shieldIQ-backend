@@ -19,6 +19,7 @@ class CreateCampaignRequestSerializer(serializers.Serializer):
         child=serializers.CharField(), required=False, default=[]
     )
     email_type = serializers.ChoiceField(choices=constants.CampaignEmailsEnum.choices)
+    create_default_emails = serializers.BooleanField(default=False)
 
     def validate(self, attrs):
         # Cross-field validation
