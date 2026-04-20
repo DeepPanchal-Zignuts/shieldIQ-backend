@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "apps.users.apps.UsersConfig",
+    "apps.campaigns.apps.CampaignsConfig",
 ]
 
 MIDDLEWARE = [

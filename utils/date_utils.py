@@ -79,3 +79,8 @@ def format_datetime(dt: datetime, fmt: str = "%Y-%m-%dT%H:%M:%S%z") -> str:
 def parse_datetime(date_string: str, fmt: str = "%Y-%m-%dT%H:%M:%S%z") -> datetime:
     """Parse a string to a timezone-aware datetime."""
     return datetime.strptime(date_string, fmt)
+
+
+def get_current_date():
+    """Return the current date (UTC) without time."""
+    return get_now().date()
