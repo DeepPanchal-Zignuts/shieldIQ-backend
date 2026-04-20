@@ -1,3 +1,4 @@
+from email.policy import default
 from rest_framework import serializers
 from common.constants import constants
 from common.constants import messages
@@ -33,6 +34,30 @@ class CreateCampaignRequestSerializer(serializers.Serializer):
         return attrs
 
 
+class CreateCampaignEmailRequestSerializer(serializers.Serializer):
+    sender = serializers.CharField(
+        required=True,
+        min_length=3,
+        max_length=255,
+    )
+    from_email = serializers.EmailField(
+        required=True,
+        min_length=3,
+        max_length=255,
+    )
+    subject = serializers.CharField(
+        required=True,
+        min_length=3,
+        max_length=255,
+    )
+    body = serializers.CharField()
+    link_text = serializers.CharField(
+        allow_blank=True,
+        max_length=255,
+    )
+    is_phishing = serializers.BooleanField(default=False)
+
+
 # ══════════════════════════════════════════════════════════════
 # Response Serializers (output formatting)
 # ══════════════════════════════════════════════════════════════
@@ -54,5 +79,23 @@ class CampaignResponseSerializer(serializers.Serializer):
     created_by = serializers.CharField()
 
 
+class CampaignEmailResponseSerializer(serializers.Serializer):
+    """Serializes user data for API responses."""
+
+    id = serializers.UUIDField()
+    sender = serializers.CharField()
+    from_email = serializers.EmailField()
+    subject = serializers.CharField()
+    body = serializers.CharField()
+    link_text = serializers.CharField()
+    is_phishing = serializers.BooleanField()
+    created_at = serializers.DateTimeField()
+    updated_at = serializers.DateTimeField()
+
+
 class CreateCampaignResponseSerializer(serializers.Serializer):
     campaign = CampaignResponseSerializer()
+
+
+class CreateCampaignEmailResponseSerializer(serializers.Serializer):
+    campaign_email = CampaignEmailResponseSerializer()
