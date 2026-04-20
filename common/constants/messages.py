@@ -78,3 +78,13 @@ class ValidationMessages:
 
 class DepartmentMessages:
     INVALID_DEPARTMENT_ENUM = "Invalid department value"
+
+
+class CampaignMessages:
+    END_DATE_GREATER_THAN_START_DATE = "end_date must be greater than start_date"
+    START_DATE_GREATER_THAN_TODAY = "start_date must be greater than or equal to today"
+    CAMPAIGN_CREATED = "Campaign created successfully"
+    CAMPAIGN_NOT_FOUND = "Campaign not found"
+    CAMPAIGN_UPDATED = "Campaign updated successfully"
+    CAMPAIGN_DELETED = "Campaign deleted successfully"
+    CAMPAIGNS_FETCHED = "Campaigns fetched successfully"

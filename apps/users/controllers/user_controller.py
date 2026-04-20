@@ -5,7 +5,6 @@ from apps.users.serializers.user_serializer import (
     UserListRequestSerializer,
     UserListResponseSerializer,
 )
-from apps.users.services.profile_service import ProfileService
 from apps.users.services.user_service import UserService
 from common.responses.api_response import ApiResponse
 from common.constants.messages import UserMessages

@@ -10,3 +10,20 @@ class DepartmentEnum(models.TextChoices):
     HUMAN_RESOURCES = "human_resources", "Human Resources"
     FINANCE = "finance", "Finance"
     EXECUTIVE = "executive", "Executive"
+
+
+class CampaignEmailsEnum(models.TextChoices):
+    """Campaign emails enum."""
+
+    URGENT = "urgent", "Urgent"
+    INVOICE = "invoice", "Invoice"
+    PASSWORD_RESET = "password_reset", "Password Reset"
+    GENERAL = "general", "General"
+
+
+class CampaignStatusEnum(models.TextChoices):
+    """Campaign Status enum."""
+
+    DRAFT = "draft", "Draft"
+    ACTIVE = "active", "Active"
+    COMPLETED = "completed", "Completed"
