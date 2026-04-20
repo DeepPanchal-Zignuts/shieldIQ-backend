@@ -88,3 +88,6 @@ class CampaignMessages:
     CAMPAIGN_UPDATED = "Campaign updated successfully"
     CAMPAIGN_DELETED = "Campaign deleted successfully"
     CAMPAIGNS_FETCHED = "Campaigns fetched successfully"
+
+    # Campaign email
+    CAMPAIGN_EMAIL_CREATED = "Campaign email created successfully"
