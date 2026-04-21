@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "apps.users.apps.UsersConfig",
     "apps.campaigns.apps.CampaignsConfig",
+    "apps.events.apps.EventsConfig",
 ]
 
 MIDDLEWARE = [

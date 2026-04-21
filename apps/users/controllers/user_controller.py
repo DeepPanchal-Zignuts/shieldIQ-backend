@@ -12,7 +12,7 @@ from common.constants.messages import UserMessages
 
 class UserController(ViewSet):
 
-    # GET /api/v1/profile/me/
+    # GET /api/v1/admin/users/list
     @action(
         detail=False,
         methods=["get"],

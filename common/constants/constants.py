@@ -27,3 +27,12 @@ class CampaignStatusEnum(models.TextChoices):
     DRAFT = "draft", "Draft"
     ACTIVE = "active", "Active"
     COMPLETED = "completed", "Completed"
+
+
+class CampaignEventsEnum(models.TextChoices):
+    """Campaign Events enum."""
+
+    SENT = "sent", "Sent"
+    OPENED = "opened", "Opened"
+    LINK_CLICKED = "link_clicked", "Link Clicked"
+    REPORTED = "reported", "Reported"

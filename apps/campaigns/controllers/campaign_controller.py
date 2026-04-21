@@ -9,13 +9,11 @@ from apps.campaigns.services.campaign_service import CampaignService
 from common.constants.messages import CampaignMessages
 from common.responses.api_response import ApiResponse
 
-# Create your views here.
-
 
 class CampaignController(ViewSet):
     permission_classes = [IsAdminUser]
 
-    # GET /api/v1/campaign/
+    # POST /api/v1/admin/campaign/
     def create(self, request):
 
         # Validate request

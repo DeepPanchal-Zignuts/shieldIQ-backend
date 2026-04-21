@@ -1,5 +1,7 @@
 from uuid import UUID
 from apps.campaigns.models.campaign_model import Campaign
+from common.constants.error_code import ErrorCodes
+from common.exceptions.custom_exceptions import NotFoundException
 
 
 class CampaignRepository:
@@ -17,5 +19,10 @@ class CampaignRepository:
             "id": campaign_id,
             "is_deleted": False,
         }
-
-        return Campaign.objects.get(**data)
+        try:
+            return Campaign.objects.get(**data)
+        except Campaign.DoesNotExist as e:
+            raise NotFoundException(
+                message=str(e),
+                error_code=ErrorCodes.NOT_FOUND,
+            )

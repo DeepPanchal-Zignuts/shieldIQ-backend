@@ -1,0 +1,1 @@
+from .campaign_events_model import CampaignEvents
