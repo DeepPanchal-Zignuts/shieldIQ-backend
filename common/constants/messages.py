@@ -89,5 +89,10 @@ class CampaignMessages:
     CAMPAIGN_DELETED = "Campaign deleted successfully"
     CAMPAIGNS_FETCHED = "Campaigns fetched successfully"
 
-    # Campaign email
+    # Campaign emails
     CAMPAIGN_EMAIL_CREATED = "Campaign email created successfully"
+    CAMPAIGN_EMAIL_NOT_FOUND = "Campaign email not found"
+
+    # Campaign events
+    CAMPAIGN_EVENT_CREATED = "Campaign event created successfully"
+    CAMPAIGN_EVENT_ALREADY_REGISTERED = "Campaign event already registered."

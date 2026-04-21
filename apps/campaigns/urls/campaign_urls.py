@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from apps.campaigns.controllers.campaign_controller import CampaignController
 from apps.campaigns.controllers.campaign_email_controller import CampaignEmailController
 
+
 # Create a router using the DefaultRouter
 router = DefaultRouter(trailing_slash=True)
 router.register(r"", CampaignController, basename="campaigns")

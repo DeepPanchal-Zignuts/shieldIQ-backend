@@ -1,8 +1,7 @@
-from email.policy import default
 from rest_framework import serializers
 from common.constants import constants
 from common.constants import messages
-from common.constants.messages import CampaignMessages, ValidationMessages
+from common.constants.messages import CampaignMessages
 from utils.date_utils import get_current_date
 
 # ══════════════════════════════════════════════════════════════
