@@ -99,3 +99,8 @@ class CreateCampaignResponseSerializer(serializers.Serializer):
 
 class CreateCampaignEmailResponseSerializer(serializers.Serializer):
     campaign_email = CampaignEmailResponseSerializer()
+
+
+class CampaignListResponseSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    campaigns = CampaignResponseSerializer(many=True)

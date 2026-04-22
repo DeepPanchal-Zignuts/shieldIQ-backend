@@ -1,8 +1,12 @@
+from uuid import UUID
 from apps.campaigns.repositories.campaign_repository import CampaignRepository
 from apps.campaigns.repositories.campaign_email_repository import (
     CampaignEmailRepository,
 )
 from common.constants.email_templates import DEFAULT_CAMPAIGN_EMAILS
+from common.constants.error_code import ErrorCodes
+from common.constants.messages import CampaignMessages
+from common.exceptions.custom_exceptions import NotFoundException
 
 
 class CampaignService:
@@ -27,4 +31,19 @@ class CampaignService:
 
         return {
             "campaign": campaign,
+        }
+
+    @staticmethod
+    def get_all_campaigns(user_id: UUID) -> dict:
+        # Get all campaigns for this user
+        campaigns = CampaignRepository.get_campaigns_by_user_id(user_id)
+        if not campaigns.exists():
+            raise NotFoundException(
+                message=CampaignMessages.NO_CAMPAIGNS_FOUND,
+                error_code=ErrorCodes.NOT_FOUND,
+            )
+
+        return {
+            "campaigns": campaigns,
+            "count": campaigns.count(),
         }

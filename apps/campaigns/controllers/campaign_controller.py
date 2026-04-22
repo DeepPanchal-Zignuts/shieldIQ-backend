@@ -4,6 +4,7 @@ from rest_framework.viewsets import ViewSet
 from apps.campaigns.serializers.campaign_serializer import (
     CreateCampaignRequestSerializer,
     CreateCampaignResponseSerializer,
+    CampaignListResponseSerializer,
 )
 from apps.campaigns.services.campaign_service import CampaignService
 from common.constants.messages import CampaignMessages
@@ -34,4 +35,19 @@ class CampaignController(ViewSet):
         return ApiResponse.created(
             data=response_data.data,
             message=CampaignMessages.CAMPAIGN_CREATED,
+        )
+
+    # GET /api/v1/admin/campaign/
+    def list(self, request):
+        # Create the campaign
+        campaigns_list = CampaignService.get_all_campaigns(
+            user_id=request.user.id,
+        )
+
+        # Serialize the response data
+        response_data = CampaignListResponseSerializer(campaigns_list)
+
+        return ApiResponse.success(
+            data=response_data.data,
+            message=CampaignMessages.CAMPAIGNS_FETCHED,
         )

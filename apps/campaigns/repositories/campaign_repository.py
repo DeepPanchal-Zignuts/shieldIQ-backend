@@ -26,3 +26,10 @@ class CampaignRepository:
                 message=str(e),
                 error_code=ErrorCodes.NOT_FOUND,
             )
+
+    @classmethod
+    def get_campaigns_by_user_id(cls, user_id: UUID):
+        return Campaign.objects.filter(
+            created_by=user_id,
+            is_deleted=False,
+        ).order_by("-created_at")
