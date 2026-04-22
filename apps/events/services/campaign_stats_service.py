@@ -1,0 +1,203 @@
+from django.db.models import Sum
+
+from apps.campaigns.repositories.campaign_repository import CampaignRepository
+from apps.events.models.campaign_events_model import CampaignEvents
+from apps.users.models.user_model import User
+from common.constants.constants import CampaignEventsEnum
+
+
+class CampaignStatsService:
+    # ──────────────────────────────────────────────
+    # 1. AVERAGE SCORE
+    # The average of score_impact sum per user for this campaign.
+    # Each user's campaign score = sum of all their score_impacts in this campaign.
+    # We then average that across all users who were targeted.
+    # ──────────────────────────────────────────────
+    @staticmethod
+    def get_average_score(campaign_id: int) -> float:
+        """
+        Returns the average security score impact across all targeted users
+        for a given campaign.
+
+        Step 1: For each user, sum their score_impact across all events in this campaign.
+        Step 2: Average those sums across all users.
+        """
+        # Aggregate score per user first, then average across users
+        per_user_scores = (
+            CampaignEvents.objects.filter(campaign_id=campaign_id)
+            .values("user_id")  # group by user
+            .annotate(user_total_impact=Sum("score_impact"))  # sum per user
+        )
+
+        if not per_user_scores.exists():
+            return 0.0
+
+        total = sum(u["user_total_impact"] for u in per_user_scores)
+        return round(total / per_user_scores.count(), 2)
+
+    # ──────────────────────────────────────────────
+    # 2. CLICK RATE
+    # % of targeted users who clicked on at least one phishing email.
+    # Only counts emails where is_phishing=True.
+    # One user clicking multiple times still counts as 1.
+    # ──────────────────────────────────────────────
+    @staticmethod
+    def get_click_rate(campaign_id: int) -> float:
+        """
+        Returns the click rate as a percentage (0-100).
+
+        Numerator:   distinct users who have a LINK_CLICKED event
+                     on a phishing email in this campaign.
+        Denominator: distinct users who were sent any email in this campaign.
+        """
+        total_targeted = (
+            CampaignEvents.objects.filter(
+                campaign_id=campaign_id,
+                event_type=CampaignEventsEnum.SENT,
+            )
+            .values("user_id")
+            .distinct()
+            .count()
+        )
+
+        if total_targeted == 0:
+            return 0.0
+
+        users_who_clicked = (
+            CampaignEvents.objects.filter(
+                campaign_id=campaign_id,
+                event_type=CampaignEventsEnum.LINK_CLICKED,
+                campaign_email__is_phishing=True,  # only phishing emails count
+            )
+            .values("user_id")
+            .distinct()
+            .count()
+        )
+
+        return round((users_who_clicked / total_targeted) * 100, 2)
+
+    # ──────────────────────────────────────────────
+    # 3. REPORT RATE
+    # % of targeted users who reported at least one phishing email.
+    # Reporting a safe email (false positive) does NOT count here.
+    # ──────────────────────────────────────────────
+    @staticmethod
+    def get_report_rate(campaign_id: int) -> float:
+        """
+        Returns the report rate as a percentage (0-100).
+
+        Numerator:   distinct users who REPORTED a phishing email
+                     (is_phishing=True) in this campaign.
+        Denominator: distinct users who were sent any email in this campaign.
+
+        NOTE: Reporting a safe/decoy email is a false positive — excluded here.
+        """
+        total_targeted = (
+            CampaignEvents.objects.filter(
+                campaign_id=campaign_id,
+                event_type=CampaignEventsEnum.SENT,
+            )
+            .values("user_id")
+            .distinct()
+            .count()
+        )
+
+        if total_targeted == 0:
+            return 0.0
+
+        users_who_reported = (
+            CampaignEvents.objects.filter(
+                campaign_id=campaign_id,
+                event_type=CampaignEventsEnum.REPORTED,
+                campaign_email__is_phishing=True,  # only true phishing reports count
+            )
+            .values("user_id")
+            .distinct()
+            .count()
+        )
+
+        return round((users_who_reported / total_targeted) * 100, 2)
+
+    # ──────────────────────────────────────────────
+    # 4. ACTIVE USERS
+    # Total number of active (non-deleted) users in the system.
+    # Not campaign-specific — this is a global org metric.
+    # ──────────────────────────────────────────────
+    @staticmethod
+    def get_active_users() -> int:
+        """
+        Returns total count of active, non-deleted users.
+        Used for the admin dashboard org-wide stat card.
+        """
+        return User.objects.filter(
+            is_active=True,
+            is_deleted=False,
+        ).count()
+
+    # ──────────────────────────────────────────────
+    # 5. PROGRESS
+    # How many users have interacted with at least one email
+    # out of total users targeted by this campaign.
+    # "Interacted" = any event beyond SENT (OPENED, CLICKED, REPORTED)
+    # ──────────────────────────────────────────────
+    @staticmethod
+    def get_progress(campaign_id: int) -> dict:
+        """
+        Returns a dict with interacted count and total targeted count.
+        e.g. {"interacted": 18, "total": 25}
+
+        "Interacted" means the user performed at least one action
+        beyond just being sent the email (OPENED, LINK_CLICKED, REPORTED).
+
+        Frontend can display this as "18 / 25" or as a percentage.
+        """
+        total_targeted = (
+            CampaignEvents.objects.filter(
+                campaign_id=campaign_id,
+                event_type=CampaignEventsEnum.SENT,
+            )
+            .values("user_id")
+            .distinct()
+            .count()
+        )
+
+        users_interacted = (
+            CampaignEvents.objects.filter(
+                campaign_id=campaign_id,
+                event_type__in=[
+                    CampaignEventsEnum.OPENED,
+                    CampaignEventsEnum.LINK_CLICKED,
+                    CampaignEventsEnum.REPORTED,
+                ],
+            )
+            .values("user_id")
+            .distinct()
+            .count()
+        )
+
+        return {
+            "interacted": users_interacted,
+            "total": total_targeted,
+            "percentage": round(
+                (users_interacted / total_targeted * 100) if total_targeted else 0, 2
+            ),
+        }
+
+    # ──────────────────────────────────────────────
+    # COMBINED — Get all stats for one campaign in one call
+    # Use this in the campaign list/detail API to avoid
+    # 5 separate service calls per campaign.
+    # ──────────────────────────────────────────────
+    @classmethod
+    def get_campaign_stats(cls, campaign_id: int) -> dict:
+        """
+        Returns all stats for a single campaign in one call.
+        Use this for the campaign list and campaign detail endpoints.
+        """
+        return {
+            "average_score": cls.get_average_score(campaign_id),
+            "click_rate": cls.get_click_rate(campaign_id),
+            "report_rate": cls.get_report_rate(campaign_id),
+            "active_users": cls.get_active_users(),
+            "progress": cls.get_progress(campaign_id),
+        }

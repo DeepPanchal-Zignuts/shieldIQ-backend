@@ -34,6 +34,7 @@ class CampaignEvents(models.Model):
         max_length=20,
         choices=CampaignEventsEnum.choices,
     )
+    score_impact = models.IntegerField(default=0)
 
     # Timestamps (Milliseconds)
     created_at = models.DateTimeField(auto_now_add=True)

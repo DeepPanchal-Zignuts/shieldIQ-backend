@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from apps.campaigns.models.campaign_model import Campaign
 from common.constants import constants
 from common.constants import messages
 from common.constants.messages import CampaignMessages
@@ -103,10 +102,11 @@ class CreateCampaignEmailResponseSerializer(serializers.Serializer):
 
 
 class CampaignStatsSerializer(serializers.Serializer):
-    average_score_change = serializers.FloatField()
+    average_score = serializers.FloatField()
     click_rate = serializers.FloatField()
     report_rate = serializers.FloatField()
-    progress_rate = serializers.FloatField()
+    active_users = serializers.IntegerField()
+    progress = serializers.DictField()
 
 
 class CampaignWithStatsSerializer(serializers.Serializer):
@@ -119,20 +119,18 @@ class CampaignListResponseSerializer(serializers.Serializer):
     campaigns = CampaignWithStatsSerializer(many=True)
 
 
-class GetCampaignResponseSerializer(serializers.ModelSerializer):
-    emails = CampaignEmailResponseSerializer(many=True)
+class GetCampaignResponseSerializer(serializers.Serializer):
+    # flatten campaign fields
+    id = serializers.UUIDField(source="campaign.id")
+    title = serializers.CharField(source="campaign.title")
+    description = serializers.CharField(source="campaign.description")
+    email_type = serializers.CharField(source="campaign.email_type")
+    status = serializers.CharField(source="campaign.status")
+    target_departments = serializers.ListField(source="campaign.target_departments")
+    created_by = serializers.CharField(source="campaign.created_by.email")
+    start_date = serializers.DateField(source="campaign.start_date")
+    end_date = serializers.DateField(source="campaign.end_date")
 
-    class Meta:
-        model = Campaign
-        fields = [
-            "id",
-            "title",
-            "description",
-            "email_type",
-            "status",
-            "target_departments",
-            "created_by",
-            "start_date",
-            "end_date",
-            "emails",
-        ]
+    emails = CampaignEmailResponseSerializer(source="campaign.emails.all", many=True)
+
+    stats = CampaignStatsSerializer()
