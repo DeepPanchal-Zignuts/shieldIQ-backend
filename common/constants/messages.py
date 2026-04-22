@@ -98,3 +98,7 @@ class CampaignMessages:
     # Campaign events
     CAMPAIGN_EVENT_CREATED = "Campaign event created successfully"
     CAMPAIGN_EVENT_ALREADY_REGISTERED = "Campaign event already registered."
+
+
+class DashboardMeessages:
+    DASHBOARD_DATA_FETCHED = "Dashboard data fetched successfully"

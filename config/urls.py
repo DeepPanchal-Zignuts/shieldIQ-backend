@@ -27,7 +27,7 @@ api_v1_patterns = [
     # ─── Admin Only ────────────────────────────────
     path("admin/users/", include("apps.users.urls.user_urls")),
     path("admin/campaigns/", include("apps.campaigns.urls.campaign_urls")),
-    # path("api/v1/admin/stats/", include("apps.campaigns.urls.stats_urls")),
+    path("admin/stats/", include("apps.events.urls.stats_urls")),
 ]
 
 # Root url patterns
