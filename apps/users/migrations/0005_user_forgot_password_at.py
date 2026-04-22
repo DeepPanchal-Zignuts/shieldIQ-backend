@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0004_user_forgot_password_token'),
+        ("users", "0004_user_forgot_password_token"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='forgot_password_at',
+            model_name="users",
+            name="forgot_password_at",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

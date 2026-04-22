@@ -2,13 +2,13 @@ from typing import Optional, Dict, Any
 from uuid import UUID
 
 from django.db.models import Q, QuerySet
-from apps.users.models.user_model import User
+from apps.users.models.user_model import Users
 from apps.users.repositories.base_repository import BaseRepository
 from utils import date_utils
 
 
 class UserRepository(BaseRepository):
-    model = User
+    model = Users
 
     @classmethod
     def email_exists(cls, email: str) -> bool:
@@ -28,7 +28,7 @@ class UserRepository(BaseRepository):
         return user
 
     @classmethod
-    def get_by_email(cls, email: str, raise_exception: bool = True) -> Optional[User]:
+    def get_by_email(cls, email: str, raise_exception: bool = True) -> Optional[Users]:
         # Check if a user with the given email already exists.
         return cls.get_by_field(
             email=email.lower(), raise_exception=raise_exception, is_deleted=False
@@ -47,7 +47,7 @@ class UserRepository(BaseRepository):
         token: str,
         token_field: str = "verification_token",
         raise_exception: bool = True,
-    ) -> Optional[User]:
+    ) -> Optional[Users]:
         return cls.get_by_field(
             **{
                 token_field: token,
@@ -60,7 +60,7 @@ class UserRepository(BaseRepository):
     def get_all_users(
         cls,
         filters: Dict[str, Any] = None,
-    ) -> QuerySet[User]:
+    ) -> QuerySet[Users]:
         # Define the filters to be applied to the queryset.
         filters = filters or {}
 

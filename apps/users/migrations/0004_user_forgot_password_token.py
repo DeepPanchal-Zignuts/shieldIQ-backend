@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0003_user_verification_token'),
+        ("users", "0003_user_verification_token"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='forgot_password_token',
+            model_name="users",
+            name="forgot_password_token",
             field=models.TextField(blank=True, null=True),
         ),
     ]

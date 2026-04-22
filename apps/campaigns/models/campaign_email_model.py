@@ -2,8 +2,12 @@ import uuid
 from django.db import models
 
 
-# CampaignEmail model represents the emails associated with the campaign in the system
-class CampaignEmail(models.Model):
+# CampaignEmails model represents the emails associated with the campaign in the system
+class CampaignEmails(models.Model):
+
+    class Meta:
+        db_table = "campaign_emails"
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -11,7 +15,7 @@ class CampaignEmail(models.Model):
         db_index=True,
     )
     campaign = models.ForeignKey(
-        "campaigns.Campaign",
+        "campaigns.Campaigns",
         on_delete=models.CASCADE,
         related_name="emails",
     )

@@ -1,2 +1,2 @@
-from .campaign_model import Campaign
-from .campaign_email_model import CampaignEmail
+from .campaign_model import Campaigns
+from .campaign_email_model import CampaignEmails

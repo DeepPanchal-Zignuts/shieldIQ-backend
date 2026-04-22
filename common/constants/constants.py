@@ -13,7 +13,7 @@ class DepartmentEnum(models.TextChoices):
 
 
 class CampaignEmailsEnum(models.TextChoices):
-    """Campaign emails enum."""
+    """Campaigns emails enum."""
 
     URGENT = "urgent", "Urgent"
     INVOICE = "invoice", "Invoice"
@@ -22,7 +22,7 @@ class CampaignEmailsEnum(models.TextChoices):
 
 
 class CampaignStatusEnum(models.TextChoices):
-    """Campaign Status enum."""
+    """Campaigns Status enum."""
 
     DRAFT = "draft", "Draft"
     ACTIVE = "active", "Active"
@@ -30,7 +30,7 @@ class CampaignStatusEnum(models.TextChoices):
 
 
 class CampaignEventsEnum(models.TextChoices):
-    """Campaign Events enum."""
+    """Campaigns Events enum."""
 
     SENT = "sent", "Sent"
     OPENED = "opened", "Opened"

@@ -6,6 +6,9 @@ from common.constants.constants import CampaignEventsEnum
 
 # CampaignEvents model represents the events made on a campaign by a user
 class CampaignEvents(models.Model):
+    class Meta:
+        db_table = "campaign_events"
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -13,19 +16,19 @@ class CampaignEvents(models.Model):
         db_index=True,
     )
     campaign = models.ForeignKey(
-        "campaigns.Campaign",
+        "campaigns.Campaigns",
         on_delete=models.CASCADE,
         related_name="events",
     )
 
     campaign_email = models.ForeignKey(
-        "campaigns.CampaignEmail",
+        "campaigns.campaignemails",
         on_delete=models.CASCADE,
         related_name="events",
     )
 
     user = models.ForeignKey(
-        "users.User",
+        "users.Users",
         on_delete=models.CASCADE,
         related_name="campaign_events",
     )

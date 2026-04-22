@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0002_user_department_user_security_score'),
+        ("users", "0002_user_department_user_security_score"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='verification_token',
+            model_name="users",
+            name="verification_token",
             field=models.TextField(blank=True, null=True),
         ),
     ]

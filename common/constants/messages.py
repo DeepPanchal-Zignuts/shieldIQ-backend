@@ -18,7 +18,7 @@ class BaseMessages:
 
 class AuthMessages:
     # Registration
-    REGISTER_SUCCESS = "User registered successfully. Please verify your email."
+    REGISTER_SUCCESS = "Users registered successfully. Please verify your email."
 
     # Email Verification
     EMAIL_VERIFIED = "Email verified successfully"
@@ -49,12 +49,12 @@ class AuthMessages:
 
 
 class UserMessages:
-    USER_NOT_FOUND = "User not found"
-    USER_UPDATED = "User updated successfully"
-    USER_DELETED = "User deleted successfully"
+    USER_NOT_FOUND = "Users not found"
+    USER_UPDATED = "Users updated successfully"
+    USER_DELETED = "Users deleted successfully"
     USER_WITH_EMAIL_ALREADY_EXISTS = "A user with this email already exists."
     EMAIL_SENDING_FAILED = "Failed to send verification email to {}"
-    USER_PROFILE_SUCCESS = "User details Fetched Successfully."
+    USER_PROFILE_SUCCESS = "Users details Fetched Successfully."
     USERS_FETCH_SUCCESS = "Users fetched Successfully."
 
 
@@ -83,21 +83,21 @@ class DepartmentMessages:
 class CampaignMessages:
     END_DATE_GREATER_THAN_START_DATE = "end_date must be greater than start_date"
     START_DATE_GREATER_THAN_TODAY = "start_date must be greater than or equal to today"
-    CAMPAIGN_CREATED = "Campaign created successfully"
-    CAMPAIGN_NOT_FOUND = "Campaign not found"
-    CAMPAIGN_UPDATED = "Campaign updated successfully"
-    CAMPAIGN_DELETED = "Campaign deleted successfully"
-    CAMPAIGN_FETCHED = "Campaign fetched successfully"
+    CAMPAIGN_CREATED = "Campaigns created successfully"
+    CAMPAIGN_NOT_FOUND = "Campaigns not found"
+    CAMPAIGN_UPDATED = "Campaigns updated successfully"
+    CAMPAIGN_DELETED = "Campaigns deleted successfully"
+    CAMPAIGN_FETCHED = "Campaigns fetched successfully"
     CAMPAIGNS_FETCHED = "Campaigns fetched successfully"
     NO_CAMPAIGNS_FOUND = "No campaigns found"
 
-    # Campaign emails
-    CAMPAIGN_EMAIL_CREATED = "Campaign email created successfully"
-    CAMPAIGN_EMAIL_NOT_FOUND = "Campaign email not found"
+    # Campaigns emails
+    CAMPAIGN_EMAIL_CREATED = "Campaigns email created successfully"
+    CAMPAIGN_EMAIL_NOT_FOUND = "Campaigns email not found"
 
-    # Campaign events
-    CAMPAIGN_EVENT_CREATED = "Campaign event created successfully"
-    CAMPAIGN_EVENT_ALREADY_REGISTERED = "Campaign event already registered."
+    # Campaigns events
+    CAMPAIGN_EVENT_CREATED = "Campaigns event created successfully"
+    CAMPAIGN_EVENT_ALREADY_REGISTERED = "Campaigns event already registered."
 
 
 class DashboardMeessages:
