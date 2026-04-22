@@ -134,3 +134,7 @@ class GetCampaignResponseSerializer(serializers.Serializer):
     emails = CampaignEmailResponseSerializer(source="campaign.emails.all", many=True)
 
     stats = CampaignStatsSerializer()
+
+
+class DashboardResponseSerializer(serializers.Serializer):
+    stats = CampaignStatsSerializer()
