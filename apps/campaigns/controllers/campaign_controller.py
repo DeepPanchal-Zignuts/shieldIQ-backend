@@ -5,6 +5,7 @@ from apps.campaigns.serializers.campaign_serializer import (
     CreateCampaignRequestSerializer,
     CreateCampaignResponseSerializer,
     CampaignListResponseSerializer,
+    GetCampaignResponseSerializer,
 )
 from apps.campaigns.services.campaign_service import CampaignService
 from common.constants.messages import CampaignMessages
@@ -50,4 +51,17 @@ class CampaignController(ViewSet):
         return ApiResponse.success(
             data=response_data.data,
             message=CampaignMessages.CAMPAIGNS_FETCHED,
+        )
+
+    # GET /api/v1/admin/campaign/{campaign_id}/
+    def retrieve(self, request, pk=None):
+
+        campaign = CampaignService.get_campaign_details(campaign_id=pk)
+
+        # Serialize the response data
+        response_data = GetCampaignResponseSerializer(campaign)
+
+        return ApiResponse.success(
+            data=response_data.data,
+            message=CampaignMessages.CAMPAIGN_FETCHED,
         )

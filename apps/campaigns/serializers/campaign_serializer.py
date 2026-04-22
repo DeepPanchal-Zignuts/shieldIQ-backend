@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from apps.campaigns.models.campaign_model import Campaign
 from common.constants import constants
 from common.constants import messages
 from common.constants.messages import CampaignMessages
@@ -101,6 +102,37 @@ class CreateCampaignEmailResponseSerializer(serializers.Serializer):
     campaign_email = CampaignEmailResponseSerializer()
 
 
+class CampaignStatsSerializer(serializers.Serializer):
+    average_score_change = serializers.FloatField()
+    click_rate = serializers.FloatField()
+    report_rate = serializers.FloatField()
+    progress_rate = serializers.FloatField()
+
+
+class CampaignWithStatsSerializer(serializers.Serializer):
+    campaign = CampaignResponseSerializer()
+    stats = CampaignStatsSerializer()
+
+
 class CampaignListResponseSerializer(serializers.Serializer):
     count = serializers.IntegerField()
-    campaigns = CampaignResponseSerializer(many=True)
+    campaigns = CampaignWithStatsSerializer(many=True)
+
+
+class GetCampaignResponseSerializer(serializers.ModelSerializer):
+    emails = CampaignEmailResponseSerializer(many=True)
+
+    class Meta:
+        model = Campaign
+        fields = [
+            "id",
+            "title",
+            "description",
+            "email_type",
+            "status",
+            "target_departments",
+            "created_by",
+            "start_date",
+            "end_date",
+            "emails",
+        ]

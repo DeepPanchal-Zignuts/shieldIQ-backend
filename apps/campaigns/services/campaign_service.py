@@ -3,6 +3,7 @@ from apps.campaigns.repositories.campaign_repository import CampaignRepository
 from apps.campaigns.repositories.campaign_email_repository import (
     CampaignEmailRepository,
 )
+from apps.events.services.campaign_stats_service import CampaignStatsService
 from common.constants.email_templates import DEFAULT_CAMPAIGN_EMAILS
 from common.constants.error_code import ErrorCodes
 from common.constants.messages import CampaignMessages
@@ -47,3 +48,7 @@ class CampaignService:
             "campaigns": campaigns,
             "count": campaigns.count(),
         }
+
+    @staticmethod
+    def get_campaign_details(campaign_id: UUID) -> dict:
+        return CampaignRepository.get_campaign_with_emails(campaign_id)
