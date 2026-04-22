@@ -26,8 +26,12 @@ class UserManager(BaseUserManager):
         return user
 
 
-# User model represents the users of the system
-class User(AbstractBaseUser, PermissionsMixin):
+# Users model represents the users of the system
+class Users(AbstractBaseUser, PermissionsMixin):
+
+    class Meta:
+        db_table = "users"
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,

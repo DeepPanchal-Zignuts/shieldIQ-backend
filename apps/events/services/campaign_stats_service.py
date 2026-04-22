@@ -3,7 +3,7 @@ from django.db.models import Sum
 
 from apps.campaigns.repositories.campaign_repository import CampaignRepository
 from apps.events.models.campaign_events_model import CampaignEvents
-from apps.users.models.user_model import User
+from apps.users.models.user_model import Users
 from common.constants.constants import CampaignEventsEnum
 
 
@@ -130,7 +130,7 @@ class CampaignStatsService:
         Returns total count of active, non-deleted users.
         Used for the admin dashboard org-wide stat card.
         """
-        return User.objects.filter(
+        return Users.objects.filter(
             is_active=True,
             is_deleted=False,
         ).count()

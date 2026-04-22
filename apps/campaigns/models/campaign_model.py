@@ -3,8 +3,11 @@ from django.db import models
 from common.constants import constants
 
 
-# Campaign model represents the campaigns in the system
-class Campaign(models.Model):
+# Campaigns model represents the campaigns in the system
+class Campaigns(models.Model):
+    class Meta:
+        db_table = "campaigns"
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -34,7 +37,7 @@ class Campaign(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
-        "users.User",
+        "users.Users",
         on_delete=models.SET_NULL,
         null=True,
         related_name="campaigns_created",

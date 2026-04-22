@@ -20,7 +20,7 @@ from django.urls import path, include
 api_v1_patterns = [
     # ─── Public Auth ───────────────────────────────
     path("auth/", include("apps.users.urls.auth_urls")),
-    # ─── User Facing ───────────────────────────────
+    # ─── Users Facing ───────────────────────────────
     path("profile/", include("apps.users.urls.profile_urls")),
     path("events/", include("apps.events.urls.event_urls")),
     # path("api/v1/knowledge/", include("apps.knowledge.urls")),
