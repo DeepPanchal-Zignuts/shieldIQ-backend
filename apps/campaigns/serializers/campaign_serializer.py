@@ -99,3 +99,38 @@ class CreateCampaignResponseSerializer(serializers.Serializer):
 
 class CreateCampaignEmailResponseSerializer(serializers.Serializer):
     campaign_email = CampaignEmailResponseSerializer()
+
+
+class CampaignStatsSerializer(serializers.Serializer):
+    average_score = serializers.FloatField()
+    click_rate = serializers.FloatField()
+    report_rate = serializers.FloatField()
+    active_users = serializers.IntegerField()
+    progress = serializers.DictField()
+
+
+class CampaignWithStatsSerializer(serializers.Serializer):
+    campaign = CampaignResponseSerializer()
+    stats = CampaignStatsSerializer()
+
+
+class CampaignListResponseSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    campaigns = CampaignWithStatsSerializer(many=True)
+
+
+class GetCampaignResponseSerializer(serializers.Serializer):
+    # flatten campaign fields
+    id = serializers.UUIDField(source="campaign.id")
+    title = serializers.CharField(source="campaign.title")
+    description = serializers.CharField(source="campaign.description")
+    email_type = serializers.CharField(source="campaign.email_type")
+    status = serializers.CharField(source="campaign.status")
+    target_departments = serializers.ListField(source="campaign.target_departments")
+    created_by = serializers.CharField(source="campaign.created_by.email")
+    start_date = serializers.DateField(source="campaign.start_date")
+    end_date = serializers.DateField(source="campaign.end_date")
+
+    emails = CampaignEmailResponseSerializer(source="campaign.emails.all", many=True)
+
+    stats = CampaignStatsSerializer()

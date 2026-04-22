@@ -87,7 +87,9 @@ class CampaignMessages:
     CAMPAIGN_NOT_FOUND = "Campaign not found"
     CAMPAIGN_UPDATED = "Campaign updated successfully"
     CAMPAIGN_DELETED = "Campaign deleted successfully"
+    CAMPAIGN_FETCHED = "Campaign fetched successfully"
     CAMPAIGNS_FETCHED = "Campaigns fetched successfully"
+    NO_CAMPAIGNS_FOUND = "No campaigns found"
 
     # Campaign emails
     CAMPAIGN_EMAIL_CREATED = "Campaign email created successfully"
