@@ -6,6 +6,7 @@ from apps.campaigns.models.campaign_model import Campaigns
 from common.constants.error_code import ErrorCodes
 from common.constants.messages import CampaignMessages
 from common.exceptions.custom_exceptions import NotFoundException
+from utils import date_utils
 
 
 class CampaignRepository:
@@ -63,3 +64,29 @@ class CampaignRepository:
             )
 
         return campaign
+
+    @classmethod
+    def update_campaign(cls,campaign_id: UUID, data: dict) -> Campaigns:
+        # Find the campaign to update
+        campaign = CampaignRepository.get_campaign_by_id(campaign_id)
+
+        # Update the campaign fields
+        for field, value in data.items():
+            setattr(campaign, field, value)
+
+        # Save the campaign
+        campaign.save()
+
+        return campaign
+
+    @classmethod
+    def delete_campaign(cls,campaign_id: UUID) -> None:
+        # Find the campaign to delete
+        campaign = CampaignRepository.get_campaign_by_id(campaign_id)
+
+        # set the is_deleted flag to True for soft deletion and update the deleted_at time to current time.
+        campaign.is_deleted = True
+        campaign.deleted_at = date_utils.get_now()
+
+        # Save the campaign
+        campaign.save()

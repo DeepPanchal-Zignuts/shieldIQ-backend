@@ -70,7 +70,6 @@ class UserResponseSerializer(serializers.Serializer):
     full_name = serializers.CharField()
     is_email_verified = serializers.BooleanField()
     is_active = serializers.BooleanField()
-    is_staff = serializers.BooleanField()
     department = serializers.ChoiceField(
         choices=constants.DepartmentEnum.choices, allow_null=True
     )
@@ -80,7 +79,7 @@ class UserResponseSerializer(serializers.Serializer):
     last_login_at = serializers.DateTimeField()
 
 
-class UserDetailedResponseSerializer(serializers.Serializer):
+class AdminResponseSerializer(serializers.Serializer):
     """Serializes user data for API responses."""
 
     id = serializers.UUIDField()
@@ -119,8 +118,19 @@ class LoginResponseSerializer(serializers.Serializer):
 
 
 class UserProfileDetailsResponseSerializer(serializers.Serializer):
-    user = UserDetailedResponseSerializer()
+    user = UserResponseSerializer()
 
 
 class UserListResponseSerializer(serializers.Serializer):
     users = UserResponseSerializer(many=True)
+
+
+class StatsResponseSerializer(serializers.Serializer):
+    average_score = serializers.FloatField()
+    click_rate = serializers.FloatField()
+    report_rate = serializers.FloatField()
+
+
+class UserDetailsWithStatsResponseSerializer(serializers.Serializer):
+    user = AdminResponseSerializer(source="*")
+    stats = StatsResponseSerializer(source="*")

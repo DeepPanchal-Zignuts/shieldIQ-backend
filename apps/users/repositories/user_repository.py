@@ -1,6 +1,7 @@
 from typing import Optional, Dict, Any
 from uuid import UUID
 
+from django.db import connection
 from django.db.models import Q, QuerySet
 from apps.users.models.user_model import Users
 from apps.users.repositories.base_repository import BaseRepository
@@ -85,3 +86,98 @@ class UserRepository(BaseRepository):
             queryset = queryset.filter(is_email_verified=filters["is_email_verified"])
 
         return queryset.order_by("-created_at")
+
+    @classmethod
+    def get_user_with_stats(cls, user_id: UUID) -> Optional[Dict]:
+        """Fetch a single user's profile together with their engagement stats
+        (average_score, click_rate, report_rate) in one raw SQL query."""
+        sql = """
+            SELECT
+                u.id,
+                u.email,
+                u.full_name,
+                u.department,
+                u.security_score,
+                u.is_active,
+                u.is_staff,
+                u.is_superuser,
+                u.is_email_verified,
+                u.created_at,
+                u.updated_at,
+                u.last_login_at,
+                u.security_score::FLOAT AS average_score,
+                COUNT(DISTINCT
+                    CASE WHEN ce.is_phishing = TRUE THEN ev.campaign_email_id END
+                ) AS phishing_emails_total,
+                CASE
+                    WHEN COUNT(DISTINCT
+                             CASE WHEN ce.is_phishing = TRUE
+                                  THEN ev.campaign_email_id END
+                         ) = 0
+                    THEN 0.0
+                    ELSE
+                        COUNT(DISTINCT
+                            CASE WHEN ev.event_type = 'link_clicked'
+                                      AND ce.is_phishing = TRUE
+                                 THEN ev.campaign_email_id END
+                        )::FLOAT
+                        /
+                        COUNT(DISTINCT
+                            CASE WHEN ce.is_phishing = TRUE
+                                 THEN ev.campaign_email_id END
+                        )::FLOAT
+                        * 100.0
+                END AS click_rate,
+                CASE
+                    WHEN COUNT(DISTINCT
+                             CASE WHEN ce.is_phishing = TRUE
+                                  THEN ev.campaign_email_id END
+                         ) = 0
+                    THEN 0.0
+                    ELSE
+                        COUNT(DISTINCT
+                            CASE WHEN ev.event_type = 'reported'
+                                      AND ce.is_phishing = TRUE
+                                 THEN ev.campaign_email_id END
+                        )::FLOAT
+                        /
+                        COUNT(DISTINCT
+                            CASE WHEN ce.is_phishing = TRUE
+                                 THEN ev.campaign_email_id END
+                        )::FLOAT
+                        * 100.0
+                END AS report_rate
+
+            FROM users u
+            LEFT JOIN campaign_events ev
+                   ON ev.user_id       = u.id
+                  AND ev.is_deleted    = FALSE
+            LEFT JOIN campaign_emails ce
+                   ON ce.id            = ev.campaign_email_id
+                  AND ce.is_deleted    = FALSE
+            WHERE u.id         = %s
+              AND u.is_deleted = FALSE
+            GROUP BY
+                u.id,
+                u.email,
+                u.full_name,
+                u.department,
+                u.security_score,
+                u.is_active,
+                u.is_staff,
+                u.is_superuser,
+                u.is_email_verified,
+                u.created_at,
+                u.updated_at,
+                u.last_login_at
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql, [str(user_id)])
+            columns = [col.name for col in cursor.description]
+            row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        return dict(zip(columns, row))

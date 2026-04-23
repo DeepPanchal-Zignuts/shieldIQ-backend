@@ -23,3 +23,16 @@ class UserService:
         return {
             "users": users,
         }
+
+    @staticmethod
+    def get_user_details(user_id: uuid.UUID) -> dict:
+        # Fetch the user's details from the database
+        user_details = UserRepository.get_user_with_stats(user_id)
+        if not user_details:
+            raise BadRequestException(
+                message=UserMessages.USER_NOT_FOUND,
+                error_code=ErrorCodes.NOT_FOUND,
+            )
+
+        # Return the user object
+        return user_details
