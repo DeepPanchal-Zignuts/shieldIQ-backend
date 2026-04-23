@@ -34,6 +34,27 @@ class CreateCampaignRequestSerializer(serializers.Serializer):
         return attrs
 
 
+class UpdateCampaignRequestSerializer(serializers.Serializer):
+    title = serializers.CharField(required=False, max_length=155)
+    description = serializers.CharField(required=False, min_length=3, max_length=255, allow_blank=True)
+    start_date = serializers.DateField(required=False)
+    end_date = serializers.DateField(required=False)
+    target_departments = serializers.ListField(
+        child=serializers.CharField(), required=False
+    )
+    email_type = serializers.ChoiceField(choices=constants.CampaignEmailsEnum.choices, required=False)
+    status = serializers.ChoiceField(choices=constants.CampaignStatusEnum.choices, required=False)
+
+    def validate(self, attrs):
+        start_date = attrs.get("start_date")
+        end_date = attrs.get("end_date")
+        if start_date and end_date and end_date <= start_date:
+            raise serializers.ValidationError(
+                messages.CampaignMessages.END_DATE_GREATER_THAN_START_DATE
+            )
+        return attrs
+
+
 class CreateCampaignEmailRequestSerializer(serializers.Serializer):
     sender = serializers.CharField(
         required=True,

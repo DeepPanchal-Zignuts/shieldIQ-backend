@@ -5,9 +5,7 @@ from apps.campaigns.repositories.campaign_email_repository import (
 )
 from apps.events.services.campaign_stats_service import CampaignStatsService
 from common.constants.email_templates import DEFAULT_CAMPAIGN_EMAILS
-from common.constants.error_code import ErrorCodes
-from common.constants.messages import CampaignMessages
-from common.exceptions.custom_exceptions import NotFoundException
+from utils import date_utils
 
 
 class CampaignService:
@@ -38,26 +36,9 @@ class CampaignService:
     def get_all_campaigns(user_id: UUID) -> dict:
         # Get all campaigns for this user
         campaigns = CampaignRepository.get_campaigns_by_user_id(user_id)
-        if not campaigns.exists():
-            raise NotFoundException(
-                message=CampaignMessages.NO_CAMPAIGNS_FOUND,
-                error_code=ErrorCodes.NOT_FOUND,
-            )
 
-        return {
-            "campaigns": campaigns,
-            "count": campaigns.count(),
-        }
-
-    @staticmethod
-    def get_all_campaigns(user_id: UUID) -> dict:
-        # Get all campaigns for this user
-        campaigns = CampaignRepository.get_campaigns_by_user_id(user_id)
         if not campaigns.exists():
-            raise NotFoundException(
-                message=CampaignMessages.NO_CAMPAIGNS_FOUND,
-                error_code=ErrorCodes.NOT_FOUND,
-            )
+            return {"campaigns": [], "count": 0}
 
         # Create a list of the campaigns
         campaigns = list(campaigns)
@@ -66,15 +47,8 @@ class CampaignService:
         enriched_campaigns = []
         for campaign in campaigns:
             stats = CampaignStatsService.get_campaign_stats(campaign.id)
+            enriched_campaigns.append({"campaign": campaign, "stats": stats})
 
-            enriched_campaigns.append(
-                {
-                    "campaign": campaign,
-                    "stats": stats,
-                }
-            )
-
-        # Return the count and the list of the enriched_campaigns
         return {
             "campaigns": enriched_campaigns,
             "count": len(enriched_campaigns),
@@ -93,3 +67,15 @@ class CampaignService:
             "campaign": campaign,
             "stats": campaign_stats,
         }
+
+    @staticmethod
+    def update_campaign(campaign_id: UUID, data: dict) -> dict:
+        # Update the campaign and return
+        campaign = CampaignRepository.update_campaign(campaign_id, data)
+
+        return {"campaign": campaign}
+
+    @staticmethod
+    def delete_campaign(campaign_id: UUID) -> None:
+        # Delete the campaign
+        CampaignRepository.delete_campaign(campaign_id)
