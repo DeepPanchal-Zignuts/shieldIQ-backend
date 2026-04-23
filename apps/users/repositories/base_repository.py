@@ -35,7 +35,7 @@ class BaseRepository:
     ) -> Optional[models.Model]:
         """Retrieve a single record by primary key."""
         try:
-            return cls.model.objects.get(pk=record_id)
+            return cls.model.objects.get(pk=record_id, is_deleted=False)
         except cls.model.DoesNotExist:
             if raise_exception:
                 raise NotFoundException(

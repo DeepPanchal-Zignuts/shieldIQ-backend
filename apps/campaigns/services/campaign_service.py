@@ -5,7 +5,6 @@ from apps.campaigns.repositories.campaign_email_repository import (
 )
 from apps.events.services.campaign_stats_service import CampaignStatsService
 from common.constants.email_templates import DEFAULT_CAMPAIGN_EMAILS
-from utils import date_utils
 
 
 class CampaignService:

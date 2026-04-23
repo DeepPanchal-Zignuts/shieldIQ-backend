@@ -124,3 +124,14 @@ class UserProfileDetailsResponseSerializer(serializers.Serializer):
 
 class UserListResponseSerializer(serializers.Serializer):
     users = UserResponseSerializer(many=True)
+
+
+class StatsResponseSerializer(serializers.Serializer):
+    average_score = serializers.FloatField()
+    click_rate = serializers.FloatField()
+    report_rate = serializers.FloatField()
+
+
+class UserDetailsWithStatsResponseSerializer(serializers.Serializer):
+    user = UserDetailedResponseSerializer(source="*")
+    stats = StatsResponseSerializer(source="*")
