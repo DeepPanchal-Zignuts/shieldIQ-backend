@@ -66,7 +66,7 @@ class CampaignRepository:
         return campaign
 
     @classmethod
-    def update_campaign(campaign_id: UUID, data: dict) -> Campaigns:
+    def update_campaign(cls,campaign_id: UUID, data: dict) -> Campaigns:
         # Find the campaign to update
         campaign = CampaignRepository.get_campaign_by_id(campaign_id)
 
@@ -80,7 +80,7 @@ class CampaignRepository:
         return campaign
 
     @classmethod
-    def delete_campaign(campaign_id: UUID) -> None:
+    def delete_campaign(cls,campaign_id: UUID) -> None:
         # Find the campaign to delete
         campaign = CampaignRepository.get_campaign_by_id(campaign_id)
 
