@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
     "rest_framework",
     "apps.users.apps.UsersConfig",
     "apps.campaigns.apps.CampaignsConfig",
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -138,6 +140,14 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+
+# ──────────────────────────────────────────────────────────────
+# CORS Configuration
+# ──────────────────────────────────────────────────────────────
+CORS_ALLOWED_ORIGINS = [
+   FRONTEND_URL
+]
+CORS_ALLOW_CREDENTIALS = True
 
 
 # ──────────────────────────────────────────────────────────────

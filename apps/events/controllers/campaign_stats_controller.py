@@ -14,7 +14,6 @@ class CampaignStatsController(ViewSet):
 
     # GET /api/v1/admin/stats/
     def list(self, request):
-        print("Reached")
         # find the admin dashboard
         admin_dashboard_data = CampaignStatsService.get_admin_dashboard()
 
