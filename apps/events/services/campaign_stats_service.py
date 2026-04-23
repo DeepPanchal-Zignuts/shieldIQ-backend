@@ -203,8 +203,6 @@ class CampaignStatsService:
             "progress": cls.get_progress(campaign_id),
         }
 
-    # ... (existing per-campaign methods stay untouched) ...
-
     # ──────────────────────────────────────────────
     # ADMIN DASHBOARD — All campaigns aggregated
     # Each metric is ONE DB query, no loops, no N+1.
@@ -344,7 +342,6 @@ class CampaignStatsService:
 
         Used by GET /api/v1/admin/stats/
         """
-        print("THIS   ====", cls.get_dashboard_average_score())
         return {
             "average_score": cls.get_dashboard_average_score(),  # query 1
             "click_rate": cls.get_dashboard_click_rate(),  # query 2 + 3
