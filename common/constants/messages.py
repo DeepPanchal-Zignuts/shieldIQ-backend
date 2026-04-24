@@ -56,6 +56,7 @@ class UserMessages:
     EMAIL_SENDING_FAILED = "Failed to send verification email to {}"
     USER_PROFILE_SUCCESS = "Users details Fetched Successfully."
     USERS_FETCH_SUCCESS = "Users fetched Successfully."
+    USER_DASHBOARD_SUCCESS = "Users dashboard details Fetched Successfully."
 
 
 class PermissionMessages:

@@ -5,6 +5,7 @@ from apps.users.serializers.user_serializer import (
     UserListResponseSerializer,
     UserDetailsWithStatsResponseSerializer,
     UserProfileDetailsResponseSerializer,
+    UserStatsDashboardResponseSerializer,
 )
 from apps.users.services.user_service import UserService
 from common.responses.api_response import ApiResponse
@@ -79,4 +80,23 @@ class UserController(ViewSet):
         return ApiResponse.success(
             data=response_data.data,
             message=UserMessages.USER_PROFILE_SUCCESS,
+        )
+
+    # GET /api/v1/users/stats/
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="stats",
+        url_name="stats",
+    )
+    def get_user_stats(self, request):
+        # Get the user dashboard details
+        user_stats = UserService.get_user_stats(user_id=request.user.id)
+
+        # Serialize the response data
+        response_data = UserStatsDashboardResponseSerializer(user_stats)
+
+        return ApiResponse.success(
+            data=response_data.data,
+            message=UserMessages.USER_DASHBOARD_SUCCESS,
         )
