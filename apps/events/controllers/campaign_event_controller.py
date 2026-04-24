@@ -1,12 +1,10 @@
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ViewSet
 
 from apps.events.serializers.campaign_event_serializer import (
     CreateCampaignEventRequestSerializer,
     CampaignEventResponseSerializer,
 )
-from apps.campaigns.services.campaign_email_service import CampaignEmailService
 from apps.events.services.campaign_event_service import CampaignEventService
 from common.constants.messages import CampaignMessages
 from common.responses.api_response import ApiResponse
@@ -19,7 +17,6 @@ class CampaignEventsController(ViewSet):
         methods=["post"],
         url_path="track",
         url_name="track",
-        permission_classes=[IsAuthenticated],
     )
     def create_campaign_event(self, request):
 

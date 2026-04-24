@@ -107,13 +107,13 @@ class AuthTokenResponseSerializer(serializers.Serializer):
 
 
 class RegisterResponseSerializer(serializers.Serializer):
-    user = UserResponseSerializer()
+    user = AdminResponseSerializer()
 
 
 class LoginResponseSerializer(serializers.Serializer):
     """Combined login response with user + tokens."""
 
-    user = UserResponseSerializer()
+    user = AdminResponseSerializer()
     tokens = AuthTokenResponseSerializer()
 
 

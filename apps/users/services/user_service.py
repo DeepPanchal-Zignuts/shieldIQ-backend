@@ -10,6 +10,21 @@ from common.constants.error_code import ErrorCodes
 class UserService:
 
     @staticmethod
+    def get_profile_details(user_id: uuid.UUID) -> dict:
+        # Check if the user with the user_id exists in the database.
+        user = UserRepository.get_by_id(user_id)
+        if not user:
+            raise BadRequestException(
+                message=UserMessages.USER_NOT_FOUND,
+                error_code=ErrorCodes.NOT_FOUND,
+            )
+
+        # Return the user object
+        return {
+            "user": user,
+        }
+
+    @staticmethod
     def get_all_users(filters: dict) -> dict:
         # Fetch all the users from the database
         users = UserRepository.get_all_users(filters=filters)

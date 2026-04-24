@@ -1,5 +1,4 @@
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ViewSet
 from apps.users.serializers.user_serializer import (
     ForgotPasswordSerializer,
@@ -23,8 +22,6 @@ class AuthController(ViewSet):
         methods=["post"],
         url_path="register",
         url_name="register",
-        permission_classes=[AllowAny],
-        authentication_classes=[],
     )
     def register_user(self, request):
         # Validate the input data
@@ -52,8 +49,6 @@ class AuthController(ViewSet):
         methods=["post"],
         url_path="login",
         url_name="login",
-        permission_classes=[AllowAny],
-        authentication_classes=[],
     )
     def login_user(self, request):
         # Validate the input data
@@ -85,8 +80,6 @@ class AuthController(ViewSet):
         methods=["post"],
         url_path="verify-email",
         url_name="verify-email",
-        permission_classes=[AllowAny],
-        authentication_classes=[],
     )
     def verify_email(self, request):
         # Validate the input data
@@ -108,8 +101,6 @@ class AuthController(ViewSet):
         methods=["post"],
         url_path="forgot-password",
         url_name="forgot-password",
-        permission_classes=[AllowAny],
-        authentication_classes=[],
     )
     def forgot_password(self, request):
         # Validate the input data
@@ -131,8 +122,6 @@ class AuthController(ViewSet):
         methods=["post"],
         url_path="reset-password",
         url_name="reset-password",
-        permission_classes=[AllowAny],
-        authentication_classes=[],
     )
     def reset_password(self, request):
         # Validate the input data
@@ -155,7 +144,6 @@ class AuthController(ViewSet):
         methods=["post"],
         url_path="logout",
         url_name="logout",
-        permission_classes=[IsAuthenticated],
     )
     def logout(self, request):
         # Logout the user

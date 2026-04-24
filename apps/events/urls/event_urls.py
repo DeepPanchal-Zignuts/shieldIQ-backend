@@ -1,14 +1,17 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
+from rest_framework.permissions import IsAuthenticated
 
 from apps.events.controllers.campaign_event_controller import CampaignEventsController
 
 
-# Create a router using the DefaultRouter
-router = DefaultRouter(trailing_slash=True)
-router.register(r"", CampaignEventsController, basename="events")
-
 # The `urlpatterns` list routes URLs to controllers functions
 urlpatterns = [
-    path("", include(router.urls)),
+    path(
+        "track/",
+        CampaignEventsController.as_view(
+            {"post": "create_campaign_event"},
+            permission_classes=[IsAuthenticated],
+        ),
+        name="event-create",
+    ),
 ]

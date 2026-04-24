@@ -1,10 +1,10 @@
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ViewSet
 from apps.users.serializers.user_serializer import (
     UserListRequestSerializer,
     UserListResponseSerializer,
     UserDetailsWithStatsResponseSerializer,
+    UserProfileDetailsResponseSerializer,
 )
 from apps.users.services.user_service import UserService
 from common.responses.api_response import ApiResponse
@@ -13,7 +13,31 @@ from common.constants.messages import UserMessages
 
 class UserController(ViewSet):
 
-    permission_classes = [IsAdminUser]
+    # GET /api/v1/users/me/
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="me",
+        url_name="me",
+    )
+    def get_user_profile_details(self, request):
+
+        # Get the user profile details
+        user_data = UserService.get_profile_details(
+            user_id=request.user.id,
+        )
+
+        # Serialize the response data
+        response_data = UserProfileDetailsResponseSerializer(
+            {
+                "user": user_data["user"],
+            }
+        )
+
+        return ApiResponse.success(
+            data=response_data.data,
+            message=UserMessages.USER_PROFILE_SUCCESS,
+        )
 
     # GET /api/v1/admin/users/list
     @action(
@@ -21,7 +45,6 @@ class UserController(ViewSet):
         methods=["get"],
         url_path="list",
         url_name="list",
-        permission_classes=[IsAdminUser],
     )
     def get_all_users(self, request):
         # Validate the request data
