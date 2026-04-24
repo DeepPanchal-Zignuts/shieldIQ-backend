@@ -1,3 +1,4 @@
+import json
 from typing import Optional, Dict, Any
 from uuid import UUID
 
@@ -5,6 +6,7 @@ from django.db import connection
 from django.db.models import Q, QuerySet
 from apps.users.models.user_model import Users
 from apps.users.repositories.base_repository import BaseRepository
+from common.constants import constants
 from utils import date_utils
 
 
@@ -181,3 +183,69 @@ class UserRepository(BaseRepository):
             return None
 
         return dict(zip(columns, row))
+
+    @classmethod
+    def get_user_dashboard(cls, user_id: UUID) -> Optional[Dict]:
+        """Fetch a single user's dashboard stats together with their recent activity messages."""
+        sql = f"""
+            SELECT
+                U.ID,
+                U.SECURITY_SCORE,
+                COUNT(DISTINCT CE.ID) AS ATTACKS_FACED,
+                COUNT(DISTINCT CEV.ID) FILTER (WHERE CEV.EVENT_TYPE = '{constants.CampaignEventsEnum.REPORTED}') AS REPORTED,
+                COUNT(DISTINCT CEV.ID) FILTER (WHERE CEV.EVENT_TYPE = '{constants.CampaignEventsEnum.LINK_CLICKED}') AS CLICKED,
+                COALESCE(
+                    jsonb_agg(
+                        DISTINCT jsonb_build_object(
+                            'subject', CE2.SUBJECT,
+                            'event_message',
+                                CASE
+                                    WHEN CEV2.EVENT_TYPE = '{constants.CampaignEventsEnum.OPENED}' THEN '{constants.CAMPAIGN_EVENT_MESSAGES[constants.CampaignEventsEnum.OPENED]}'
+                                    WHEN CEV2.EVENT_TYPE = '{constants.CampaignEventsEnum.LINK_CLICKED}' THEN '{constants.CAMPAIGN_EVENT_MESSAGES[constants.CampaignEventsEnum.LINK_CLICKED]}'
+                                    WHEN CEV2.EVENT_TYPE = '{constants.CampaignEventsEnum.REPORTED}' THEN '{constants.CAMPAIGN_EVENT_MESSAGES[constants.CampaignEventsEnum.REPORTED]}'
+                                    ELSE CEV2.EVENT_TYPE
+                                END,
+                            'score_impact', CEV2.SCORE_IMPACT,
+                            'created_at', CEV2.CREATED_AT
+                        )
+                    ) FILTER (WHERE CEV2.ID IS NOT NULL),
+                    '[]'::jsonb
+                ) AS events
+            FROM USERS U
+            LEFT JOIN CAMPAIGNS C 
+                ON C.TARGET_DEPARTMENTS ? U.DEPARTMENT
+                AND C.IS_DELETED = FALSE
+                AND C.STATUS = '{constants.CampaignStatusEnum.ACTIVE}'
+            LEFT JOIN CAMPAIGN_EMAILS CE 
+                ON CE.CAMPAIGN_ID = C.ID
+                AND CE.IS_DELETED = FALSE
+            LEFT JOIN CAMPAIGN_EVENTS CEV 
+                ON CEV.USER_ID = U.ID
+                AND CEV.IS_DELETED = FALSE
+            LEFT JOIN CAMPAIGN_EVENTS CEV2
+                ON CEV2.USER_ID = U.ID
+                AND CEV2.IS_DELETED = FALSE
+            LEFT JOIN CAMPAIGN_EMAILS CE2
+                ON CE2.ID = CEV2.CAMPAIGN_EMAIL_ID
+                AND CE2.IS_DELETED = FALSE
+            WHERE
+                U.ID = %s
+                AND U.DEPARTMENT IS NOT NULL
+            GROUP BY
+                U.ID;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql, [str(user_id)])
+            columns = [col.name for col in cursor.description]
+            row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        result = dict(zip(columns, row))
+
+        if result.get("events") and isinstance(result["events"], str):
+            result["events"] = json.loads(result["events"])
+
+        return result

@@ -131,6 +131,22 @@ class StatsResponseSerializer(serializers.Serializer):
     report_rate = serializers.FloatField()
 
 
+class UserRecentActivityResponseSerializer(serializers.Serializer):
+    subject = serializers.CharField()
+    score_impact = serializers.IntegerField()
+    event_message = serializers.CharField()
+    created_at = serializers.DateTimeField()
+
+
+class UserStatsDashboardResponseSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+    security_score = serializers.IntegerField()
+    attacks_faced = serializers.IntegerField()
+    reported = serializers.IntegerField()
+    clicked = serializers.IntegerField()
+    recent_activity = UserRecentActivityResponseSerializer(many=True, source="events")
+
+
 class UserDetailsWithStatsResponseSerializer(serializers.Serializer):
     user = AdminResponseSerializer(source="*")
     stats = StatsResponseSerializer(source="*")

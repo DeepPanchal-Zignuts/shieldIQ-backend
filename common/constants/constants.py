@@ -36,3 +36,11 @@ class CampaignEventsEnum(models.TextChoices):
     OPENED = "opened", "Opened"
     LINK_CLICKED = "link_clicked", "Link Clicked"
     REPORTED = "reported", "Reported"
+
+
+# Event Messages Mapping
+CAMPAIGN_EVENT_MESSAGES = {
+    CampaignEventsEnum.OPENED: "You opened an email",
+    CampaignEventsEnum.LINK_CLICKED: "You clicked a malicious link",
+    CampaignEventsEnum.REPORTED: "You reported a phishing email",
+}

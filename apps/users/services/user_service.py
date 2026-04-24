@@ -1,4 +1,4 @@
-import uuid
+from uuid import UUID
 from apps.users.repositories.user_repository import UserRepository
 from common.exceptions.custom_exceptions import (
     BadRequestException,
@@ -10,7 +10,7 @@ from common.constants.error_code import ErrorCodes
 class UserService:
 
     @staticmethod
-    def get_profile_details(user_id: uuid.UUID) -> dict:
+    def get_profile_details(user_id: UUID) -> dict:
         # Check if the user with the user_id exists in the database.
         user = UserRepository.get_by_id(user_id)
         if not user:
@@ -40,7 +40,7 @@ class UserService:
         }
 
     @staticmethod
-    def get_user_details(user_id: uuid.UUID) -> dict:
+    def get_user_details(user_id: UUID) -> dict:
         # Fetch the user's details from the database
         user_details = UserRepository.get_user_with_stats(user_id)
         if not user_details:
@@ -51,3 +51,16 @@ class UserService:
 
         # Return the user object
         return user_details
+
+    @staticmethod
+    def get_user_stats(user_id: UUID) -> dict:
+        # Fetch the user's stats from the database
+        user_stats = UserRepository.get_user_dashboard(user_id)
+        if not user_stats:
+            raise BadRequestException(
+                message=UserMessages.USER_NOT_FOUND,
+                error_code=ErrorCodes.NOT_FOUND,
+            )
+
+        # Return the user_stats object
+        return user_stats
