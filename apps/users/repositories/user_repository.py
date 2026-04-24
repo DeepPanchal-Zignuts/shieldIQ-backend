@@ -249,3 +249,14 @@ class UserRepository(BaseRepository):
             result["events"] = json.loads(result["events"])
 
         return result
+
+    @classmethod
+    def update_security_score(cls, user_id: UUID, score: int) -> int:
+        user = cls.model.objects.get(id=user_id)
+        if user is None:
+            return
+        new_score = max(0, min(100, user.security_score + score))
+        user.security_score = new_score
+        user.save(update_fields=["security_score"])
+
+        return new_score

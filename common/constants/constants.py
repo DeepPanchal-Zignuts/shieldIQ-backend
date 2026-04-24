@@ -1,5 +1,10 @@
 from django.db import models
 
+# Score constants
+PHISHING_CLICK_PENALTY = -15  # Fell for phishing email
+PHISHING_REPORT_REWARD = +10  # Correctly identified phishing
+FALSE_POSITIVE_PENALTY = 0  # Reported a safe email — no change
+
 
 class DepartmentEnum(models.TextChoices):
     """Departments within the organization."""

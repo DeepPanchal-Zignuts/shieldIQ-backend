@@ -3,6 +3,7 @@ from apps.campaigns.repositories.campaign_email_repository import (
 )
 from apps.campaigns.repositories.campaign_repository import CampaignRepository
 from apps.events.repositories.campaign_event_repository import CampaignEventRepository
+from apps.events.services.score_engine import ScoreEngine
 from common.constants.error_code import ErrorCodes
 from common.constants.messages import CampaignMessages
 from common.exceptions.custom_exceptions import BadRequestException
@@ -41,13 +42,23 @@ class CampaignEventService:
                 error_code=ErrorCodes.BAD_REQUEST,
             )
 
+        # Compute and apply score
+        score = ScoreEngine.compute_score_impact(
+            event_type=event_type,
+            is_phishing=campaign_email.is_phishing,
+        )
+
         event = CampaignEventRepository.create_campaign_event(
             {
                 "campaign": campaign,
                 "campaign_email": campaign_email,
                 "user": user,
                 "event_type": event_type,
+                "score_impact": score,
             }
         )
+
+        # Apply the score delta to the user's security score
+        ScoreEngine.apply_score_delta(user_id=event.user_id, score=score)
 
         return {"event": event}
