@@ -177,3 +177,4 @@ class UserSimulationEmailSerializer(serializers.Serializer):
     link_text = serializers.CharField()
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
+    campaign_id = serializers.UUIDField()
