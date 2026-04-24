@@ -1,14 +1,17 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
+from rest_framework.permissions import IsAdminUser
 
 from apps.events.controllers.campaign_stats_controller import CampaignStatsController
 
 
-# Create a router using the DefaultRouter
-router = DefaultRouter(trailing_slash=True)
-router.register(r"", CampaignStatsController, basename="stats")
-
 # The `urlpatterns` list routes URLs to controllers functions
 urlpatterns = [
-    path("", include(router.urls)),
+    path(
+        "",
+        CampaignStatsController.as_view(
+            {"get": "list"},
+            permission_classes=[IsAdminUser],
+        ),
+        name="stats-list",
+    ),
 ]

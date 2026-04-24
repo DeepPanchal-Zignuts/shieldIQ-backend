@@ -18,19 +18,15 @@ Including another URLconf
 from django.urls import path, include
 
 api_v1_patterns = [
-    # ─── Public Auth ───────────────────────────────
     path("auth/", include("apps.users.urls.auth_urls")),
-    # ─── Users Facing ───────────────────────────────
-    path("profile/", include("apps.users.urls.profile_urls")),
+    path("users/", include("apps.users.urls.user_urls")),
     path("events/", include("apps.events.urls.event_urls")),
-    # path("api/v1/knowledge/", include("apps.knowledge.urls")),
-    # ─── Admin Only ────────────────────────────────
-    path("admin/users/", include("apps.users.urls.user_urls")),
+    # ─── Admin Only ────────────────────────────────────────────────────────
+    path("admin/users/", include("apps.users.urls.admin_urls")),  # list, retrieve
     path("admin/campaigns/", include("apps.campaigns.urls.campaign_urls")),
     path("admin/stats/", include("apps.events.urls.stats_urls")),
 ]
 
-# Root url patterns
 urlpatterns = [
     path("api/v1/", include(api_v1_patterns)),
 ]
