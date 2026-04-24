@@ -1,8 +1,10 @@
 from uuid import UUID
 
+from django.db import connection
 from django.db.models import Prefetch
 from apps.campaigns.models.campaign_email_model import CampaignEmails
 from apps.campaigns.models.campaign_model import Campaigns
+from common.constants import constants
 from common.constants.error_code import ErrorCodes
 from common.constants.messages import CampaignMessages
 from common.exceptions.custom_exceptions import NotFoundException
@@ -66,7 +68,7 @@ class CampaignRepository:
         return campaign
 
     @classmethod
-    def update_campaign(cls,campaign_id: UUID, data: dict) -> Campaigns:
+    def update_campaign(cls, campaign_id: UUID, data: dict) -> Campaigns:
         # Find the campaign to update
         campaign = CampaignRepository.get_campaign_by_id(campaign_id)
 
@@ -80,7 +82,7 @@ class CampaignRepository:
         return campaign
 
     @classmethod
-    def delete_campaign(cls,campaign_id: UUID) -> None:
+    def delete_campaign(cls, campaign_id: UUID) -> None:
         # Find the campaign to delete
         campaign = CampaignRepository.get_campaign_by_id(campaign_id)
 
@@ -90,3 +92,84 @@ class CampaignRepository:
 
         # Save the campaign
         campaign.save()
+
+    @classmethod
+    def get_user_campaign_emails(cls, user_id: UUID, filters: dict) -> dict:
+        search = filters.get("search")
+        page = max(1, filters.get("page", 1))
+        page_size = max(1, min(filters.get("page_size", 10), 100))  # Cap at 100
+        ordering = filters.get("ordering", "-created_at")
+
+        offset = (page - 1) * page_size
+
+        # Sorting
+        order_by = "CE.CREATED_AT DESC"
+        if ordering:
+            field = ordering.lstrip("-")
+            direction = "DESC" if ordering.startswith("-") else "ASC"
+
+            allowed_fields = ["created_at"]
+            if field in allowed_fields:
+                order_by = f"CE.{field.upper()} {direction}"
+
+        # Search
+        search_query = ""
+        params = [str(user_id)]
+
+        if search:
+            search_query = """
+                AND (
+                    CE.SUBJECT ILIKE %s OR
+                    CE.BODY ILIKE %s OR
+                    CE.SENDER ILIKE %s
+                )
+            """
+            search_term = f"%{search}%"
+            params.extend([search_term, search_term, search_term])
+
+        # 🔹 Count Query
+        count_sql = f"""
+            SELECT COUNT(CE.ID)
+            FROM CAMPAIGNS C
+            LEFT JOIN CAMPAIGN_EMAILS CE ON CE.CAMPAIGN_ID = C.ID
+            LEFT JOIN USERS U ON C.TARGET_DEPARTMENTS ? U.DEPARTMENT
+            WHERE
+                U.ID = %s
+                AND U.IS_DELETED = FALSE
+                AND C.IS_DELETED = FALSE
+                AND C.STATUS = '{constants.CampaignStatusEnum.ACTIVE}'
+                {search_query}
+        """
+
+        # 🔹 Data Query
+        data_sql = f"""
+            SELECT CE.*
+            FROM CAMPAIGNS C
+            LEFT JOIN CAMPAIGN_EMAILS CE ON CE.CAMPAIGN_ID = C.ID
+            LEFT JOIN USERS U ON C.TARGET_DEPARTMENTS ? U.DEPARTMENT
+            WHERE
+                U.ID = %s
+                AND U.IS_DELETED = FALSE
+                AND C.IS_DELETED = FALSE
+                AND C.STATUS = '{constants.CampaignStatusEnum.ACTIVE}'
+                {search_query}
+            ORDER BY {order_by}
+            LIMIT %s OFFSET %s
+        """
+
+        with connection.cursor() as cursor:
+            # Count
+            cursor.execute(count_sql, params)
+            total_count = cursor.fetchone()[0]
+
+            # Data
+            cursor.execute(data_sql, params + [page_size, offset])
+            columns = [col.name for col in cursor.description]
+            rows = cursor.fetchall()
+
+        results = [dict(zip(columns, row)) for row in rows]
+
+        return {
+            "count": total_count,
+            "results": results,
+        }

@@ -21,6 +21,7 @@ api_v1_patterns = [
     path("auth/", include("apps.users.urls.auth_urls")),
     path("users/", include("apps.users.urls.user_urls")),
     path("events/", include("apps.events.urls.event_urls")),
+    path("users/simulation/", include("apps.campaigns.urls.simulation_urls")),
     # ─── Admin Only ────────────────────────────────────────────────────────
     path("admin/users/", include("apps.users.urls.admin_urls")),  # list, retrieve
     path("admin/campaigns/", include("apps.campaigns.urls.campaign_urls")),

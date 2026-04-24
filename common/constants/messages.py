@@ -95,6 +95,7 @@ class CampaignMessages:
     # Campaigns emails
     CAMPAIGN_EMAIL_CREATED = "Campaigns email created successfully"
     CAMPAIGN_EMAIL_NOT_FOUND = "Campaigns email not found"
+    SIMULATION_MAILS_FETCHED = "Simulation emails fetched successfully"
 
     # Campaigns events
     CAMPAIGN_EVENT_CREATED = "Campaigns event created successfully"

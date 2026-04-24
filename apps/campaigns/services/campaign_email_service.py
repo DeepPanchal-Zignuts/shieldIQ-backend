@@ -1,3 +1,4 @@
+from uuid import UUID
 from apps.campaigns.repositories.campaign_email_repository import (
     CampaignEmailRepository,
 )
@@ -16,3 +17,7 @@ class CampaignEmailService:
         return {
             "campaign_email": campaign_email,
         }
+
+    @staticmethod
+    def get_user_campaign_emails(user_id: UUID, filters: dict) -> dict:
+        return CampaignRepository.get_user_campaign_emails(user_id, filters)
