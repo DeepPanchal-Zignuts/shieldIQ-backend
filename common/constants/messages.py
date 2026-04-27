@@ -51,6 +51,7 @@ class AuthMessages:
 class UserMessages:
     USER_NOT_FOUND = "Users not found"
     USER_UPDATED = "Users updated successfully"
+    USER_ACCOUNT_DELETED = "User Account Deleted Successfully"
     USER_DELETED = "Users deleted successfully"
     USER_WITH_EMAIL_ALREADY_EXISTS = "A user with this email already exists."
     EMAIL_SENDING_FAILED = "Failed to send verification email to {}"

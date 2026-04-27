@@ -23,7 +23,7 @@ urlpatterns = [
     path(
         "<uuid:pk>/",
         UserController.as_view(
-            {"patch": "partial_update"},
+            {"patch": "partial_update", "delete": "delete_account"},
             permission_classes=[IsAuthenticated],
         ),
         name="user-update",

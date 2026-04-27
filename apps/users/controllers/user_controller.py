@@ -120,3 +120,14 @@ class UserController(ViewSet):
             data=response_data.data,
             message=UserMessages.USER_UPDATED,
         )
+
+    # DELETE /api/v1/users/{pk}
+    def delete_account(self, request, pk=None):
+        # Delete the user
+        UserService.delete_user(
+            user_id=pk,
+        )
+
+        return ApiResponse.success(
+            message=UserMessages.USER_ACCOUNT_DELETED,
+        )

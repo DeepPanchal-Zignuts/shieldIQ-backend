@@ -65,6 +65,7 @@ class UserService:
         # Return the user_stats object
         return user_stats
 
+    @staticmethod
     def update_user(user_id: UUID, data):
         # Check if the user with the user_id exists in the database.
         user = UserRepository.get_by_id(user_id)
@@ -81,3 +82,16 @@ class UserService:
         return {
             "user": updated_user,
         }
+
+    @staticmethod
+    def delete_user(user_id: UUID):
+        # Check if the user with the user_id exists in the database.
+        user = UserRepository.get_by_id(user_id)
+        if not user:
+            raise BadRequestException(
+                message=UserMessages.USER_NOT_FOUND,
+                error_code=ErrorCodes.NOT_FOUND,
+            )
+
+        # Delete the user
+        UserRepository.delete_user(user)

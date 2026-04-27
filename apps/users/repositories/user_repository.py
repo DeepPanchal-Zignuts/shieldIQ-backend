@@ -260,3 +260,9 @@ class UserRepository(BaseRepository):
         user.save(update_fields=["security_score"])
 
         return new_score
+
+    @classmethod
+    def delete_user(cls, user):
+        user.is_deleted = True
+        user.deleted_at = date_utils.get_now()
+        user.save(update_fields=["is_deleted", "deleted_at"])
