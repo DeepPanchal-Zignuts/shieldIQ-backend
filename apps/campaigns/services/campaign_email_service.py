@@ -21,3 +21,7 @@ class CampaignEmailService:
     @staticmethod
     def get_user_campaign_emails(user_id: UUID, filters: dict) -> dict:
         return CampaignRepository.get_user_campaign_emails(user_id, filters)
+
+    @staticmethod
+    def get_user_simulation_campaigns(user_id: UUID) -> list:
+        return CampaignRepository.get_user_simulation_campaigns(user_id)

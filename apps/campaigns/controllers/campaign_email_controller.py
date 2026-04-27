@@ -6,6 +6,7 @@ from apps.campaigns.serializers.campaign_serializer import (
     CreateCampaignEmailRequestSerializer,
     CreateCampaignEmailResponseSerializer,
     UserSimulationEmailSerializer,
+    SimulationCampaignSerializer,
 )
 from apps.campaigns.services.campaign_email_service import CampaignEmailService
 from common.constants.messages import CampaignMessages
@@ -47,6 +48,7 @@ class CampaignEmailController(ViewSet):
     def list(self, request):
         filters = {
             "search": request.query_params.get("search"),
+            "campaign_id": request.query_params.get("campaign_id"),
             "page": int(request.query_params.get("page", 1)),
             "page_size": int(request.query_params.get("page_size", 10)),
             "ordering": request.query_params.get("ordering", "-created_at"),
@@ -69,4 +71,19 @@ class CampaignEmailController(ViewSet):
                 "results": response_data.data,
             },
             message=CampaignMessages.SIMULATION_MAILS_FETCHED,
+        )
+
+    # GET /api/v1/users/simulation/campaigns/
+    def list_simulation_campaigns(self, request):
+        # Fetch the simulation campaigns for the user
+        campaigns = CampaignEmailService.get_user_simulation_campaigns(
+            user_id=request.user.id,
+        )
+
+        # Serialize the response data
+        response_data = SimulationCampaignSerializer(campaigns, many=True)
+
+        return ApiResponse.success(
+            data=response_data.data,
+            message=CampaignMessages.CAMPAIGNS_FETCHED,
         )

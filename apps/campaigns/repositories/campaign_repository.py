@@ -96,8 +96,9 @@ class CampaignRepository:
     @classmethod
     def get_user_campaign_emails(cls, user_id: UUID, filters: dict) -> dict:
         search = filters.get("search")
+        campaign_id = filters.get("campaign_id")
         page = max(1, filters.get("page", 1))
-        page_size = max(1, min(filters.get("page_size", 10), 100))  # Cap at 100
+        page_size = max(1, min(filters.get("page_size", 10), 100))
         ordering = filters.get("ordering", "-created_at")
 
         offset = (page - 1) * page_size
@@ -107,15 +108,21 @@ class CampaignRepository:
         if ordering:
             field = ordering.lstrip("-")
             direction = "DESC" if ordering.startswith("-") else "ASC"
-
             allowed_fields = ["created_at"]
             if field in allowed_fields:
                 order_by = f"CE.{field.upper()} {direction}"
 
-        # Search
-        search_query = ""
+        # Base params (user_id used in the JOIN condition)
         params = [str(user_id)]
 
+        # Optional: campaign_id filter
+        campaign_filter = ""
+        if campaign_id:
+            campaign_filter = "AND C.ID = %s"
+            params.append(str(campaign_id))
+
+        # Optional: search filter
+        search_query = ""
         if search:
             search_query = """
                 AND (
@@ -127,7 +134,7 @@ class CampaignRepository:
             search_term = f"%{search}%"
             params.extend([search_term, search_term, search_term])
 
-        # 🔹 Count Query
+        # Count Query
         count_sql = f"""
             SELECT COUNT(CE.ID)
             FROM CAMPAIGNS C
@@ -138,16 +145,17 @@ class CampaignRepository:
                 AND U.IS_DELETED = FALSE
                 AND C.IS_DELETED = FALSE
                 AND C.STATUS = '{constants.CampaignStatusEnum.ACTIVE}'
+                {campaign_filter}
                 {search_query}
         """
 
-        # 🔹 Data Query
+        # Data Query
         data_sql = f"""
             SELECT CE.*,
             EXISTS (
                 SELECT 1
                 FROM CAMPAIGN_EVENTS CEV
-                WHERE 
+                WHERE
                     CEV.CAMPAIGN_EMAIL_ID = CE.ID
                     AND CEV.USER_ID = %s
                     AND CEV.IS_DELETED = FALSE
@@ -160,6 +168,7 @@ class CampaignRepository:
                 AND U.IS_DELETED = FALSE
                 AND C.IS_DELETED = FALSE
                 AND C.STATUS = '{constants.CampaignStatusEnum.ACTIVE}'
+                {campaign_filter}
                 {search_query}
             ORDER BY {order_by}
             LIMIT %s OFFSET %s
@@ -170,7 +179,7 @@ class CampaignRepository:
             cursor.execute(count_sql, params)
             total_count = cursor.fetchone()[0]
 
-            # Data
+            # Data — prepend user_id twice (for EXISTS subquery + WHERE U.ID)
             cursor.execute(data_sql, [str(user_id)] + params + [page_size, offset])
             columns = [col.name for col in cursor.description]
             rows = cursor.fetchall()
@@ -181,3 +190,29 @@ class CampaignRepository:
             "count": total_count,
             "results": results,
         }
+
+    @classmethod
+    def get_user_simulation_campaigns(cls, user_id) -> list:
+        """
+        Return distinct active campaigns that have emails visible to this user.
+        Used to populate the campaign filter dropdown on the simulations page.
+        """
+        from django.db import connection as conn
+
+        sql = """
+            SELECT DISTINCT C.ID, C.TITLE, C.EMAIL_TYPE, C.STATUS
+            FROM CAMPAIGNS C
+            LEFT JOIN CAMPAIGN_EMAILS CE ON CE.CAMPAIGN_ID = C.ID
+            LEFT JOIN USERS U ON C.TARGET_DEPARTMENTS ? U.DEPARTMENT
+            WHERE
+                U.ID = %s
+                AND U.IS_DELETED = FALSE
+                AND C.IS_DELETED = FALSE
+                AND C.STATUS = 'active'
+            ORDER BY C.TITLE ASC
+        """
+        with conn.cursor() as cursor:
+            cursor.execute(sql, [str(user_id)])
+            columns = [col.name for col in cursor.description]
+            rows = cursor.fetchall()
+        return [dict(zip(columns, row)) for row in rows]
