@@ -252,9 +252,9 @@ class UserRepository(BaseRepository):
 
     @classmethod
     def update_security_score(cls, user_id: UUID, score: int) -> int:
-        user = cls.model.objects.get(id=user_id)
+        user = cls.model.objects.filter(id=user_id).first()
         if user is None:
-            return
+            return 0  # or raise an exception
         new_score = max(0, min(100, user.security_score + score))
         user.security_score = new_score
         user.save(update_fields=["security_score"])

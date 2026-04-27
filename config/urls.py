@@ -19,6 +19,7 @@ from django.urls import path, include
 
 api_v1_patterns = [
     path("auth/", include("apps.users.urls.auth_urls")),
+    path("medias/", include("apps.medias.urls.media_urls")),
     path("users/", include("apps.users.urls.user_urls")),
     path("events/", include("apps.events.urls.event_urls")),
     path("users/simulation/", include("apps.campaigns.urls.simulation_urls")),

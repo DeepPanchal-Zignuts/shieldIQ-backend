@@ -35,6 +35,7 @@ class ScoreEngine:
         Clamps between 0 and 100. Returns new score.
         """
         if score == 0:
-            return Users.objects.get(id=user_id).security_score
+            user = Users.objects.filter(id=user_id).first()
+            return user.security_score if user else 0
 
         return UserRepository.update_security_score(user_id, score)
