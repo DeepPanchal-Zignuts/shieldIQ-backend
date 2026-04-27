@@ -59,11 +59,7 @@ class UserController(ViewSet):
         )
 
         # Serialize the response data
-        response_data = UserListResponseSerializer(
-            {
-                "users": all_users["users"],
-            }
-        )
+        response_data = UserListResponseSerializer(all_users["users"], many=True)
 
         return ApiResponse.success(
             data=response_data.data,

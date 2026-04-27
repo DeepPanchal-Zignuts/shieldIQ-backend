@@ -1,9 +1,8 @@
 import json
-from typing import Optional, Dict, Any
+from typing import List, Optional, Dict, Any
 from uuid import UUID
 
 from django.db import connection
-from django.db.models import Q, QuerySet
 from apps.users.models.user_model import Users
 from apps.users.repositories.base_repository import BaseRepository
 from common.constants import constants
@@ -60,40 +59,121 @@ class UserRepository(BaseRepository):
         )
 
     @classmethod
-    def get_all_users(
-        cls,
-        filters: Dict[str, Any] = None,
-    ) -> QuerySet[Users]:
-        # Define the filters to be applied to the queryset.
+    def get_all_users(cls, filters: Dict[str, Any] = None) -> List[Dict]:
         filters = filters or {}
 
-        # Create a queryset to fetch all the records from the db.
-        queryset = cls.model.objects.all()
-
-        # Apply the is_deleted=false filter by default.
-        queryset = queryset.filter(is_deleted=False, is_staff=False)
-
-        # Search based on the incoming filter.
         search = filters.get("search")
+        is_active = filters.get("is_active")
+        is_email_verified = filters.get("is_email_verified")
+
+        params = []
+        where_clauses = [
+            "u.is_deleted = FALSE",
+            "u.is_staff = FALSE",
+        ]
+
+        # Search filter
         if search:
-            queryset = queryset.filter(
-                Q(email__icontains=search) | Q(full_name__icontains=search)
-            )
+            where_clauses.append("(u.email ILIKE %s OR u.full_name ILIKE %s)")
+            search_term = f"%{search}%"
+            params.extend([search_term, search_term])
 
-        # Apply additional filters if provided.
-        if filters.get("is_active") is not None:
-            queryset = queryset.filter(is_active=filters["is_active"])
+        # Active filter
+        if is_active is not None:
+            where_clauses.append("u.is_active = %s")
+            params.append(is_active)
 
-        if filters.get("is_email_verified") is not None:
-            queryset = queryset.filter(is_email_verified=filters["is_email_verified"])
+        # Email verified filter
+        if is_email_verified is not None:
+            where_clauses.append("u.is_email_verified = %s")
+            params.append(is_email_verified)
 
-        return queryset.order_by("-created_at")
+        where_sql = " AND ".join(where_clauses)
+
+        sql = f"""
+            SELECT
+                u.id,
+                u.email,
+                u.full_name,
+                u.department,
+                u.security_score,
+                u.is_active,
+                u.is_staff,
+                u.is_superuser,
+                u.is_email_verified,
+                u.created_at,
+                u.updated_at,
+                u.last_login_at,
+                u.security_score::FLOAT AS average_score,
+                CASE
+                    WHEN COUNT(DISTINCT
+                            CASE WHEN ce.is_phishing = TRUE THEN ev.campaign_email_id END
+                        ) = 0
+                    THEN 0.0
+                    ELSE
+                        COUNT(DISTINCT
+                            CASE WHEN ev.event_type = '{constants.CampaignEventsEnum.LINK_CLICKED}'
+                                 AND ce.is_phishing = TRUE
+                            THEN ev.campaign_email_id END
+                        )::FLOAT
+                        /
+                        COUNT(DISTINCT
+                            CASE WHEN ce.is_phishing = TRUE THEN ev.campaign_email_id END
+                        )::FLOAT * 100.0
+                END AS click_rate,
+                CASE
+                    WHEN COUNT(DISTINCT
+                            CASE WHEN ce.is_phishing = TRUE THEN ev.campaign_email_id END
+                        ) = 0
+                    THEN 0.0
+                    ELSE
+                        COUNT(DISTINCT
+                            CASE WHEN ev.event_type = '{constants.CampaignEventsEnum.REPORTED}'
+                                 AND ce.is_phishing = TRUE
+                            THEN ev.campaign_email_id END
+                        )::FLOAT
+                        /
+                        COUNT(DISTINCT
+                            CASE WHEN ce.is_phishing = TRUE THEN ev.campaign_email_id END
+                        )::FLOAT * 100.0
+                END AS report_rate
+            FROM users u
+            LEFT JOIN campaign_events ev
+                   ON ev.user_id = u.id
+                  AND ev.is_deleted = FALSE
+            LEFT JOIN campaign_emails ce
+                   ON ce.id = ev.campaign_email_id
+                  AND ce.is_deleted = FALSE
+            WHERE {where_sql}
+            GROUP BY
+                u.id,
+                u.email,
+                u.full_name,
+                u.department,
+                u.security_score,
+                u.is_active,
+                u.is_staff,
+                u.is_superuser,
+                u.is_email_verified,
+                u.created_at,
+                u.updated_at,
+                u.last_login_at
+    
+            ORDER BY u.created_at DESC
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql, params)
+            columns = [col.name for col in cursor.description]
+            rows = cursor.fetchall()
+
+        return [dict(zip(columns, row)) for row in rows]
 
     @classmethod
     def get_user_with_stats(cls, user_id: UUID) -> Optional[Dict]:
         """Fetch a single user's profile together with their engagement stats
         (average_score, click_rate, report_rate) in one raw SQL query."""
-        sql = """
+        sql = f"""
             SELECT
                 u.id,
                 u.email,
@@ -119,7 +199,7 @@ class UserRepository(BaseRepository):
                     THEN 0.0
                     ELSE
                         COUNT(DISTINCT
-                            CASE WHEN ev.event_type = 'link_clicked'
+                            CASE WHEN ev.event_type = '{constants.CampaignEventsEnum.LINK_CLICKED}'
                                       AND ce.is_phishing = TRUE
                                  THEN ev.campaign_email_id END
                         )::FLOAT
@@ -138,7 +218,7 @@ class UserRepository(BaseRepository):
                     THEN 0.0
                     ELSE
                         COUNT(DISTINCT
-                            CASE WHEN ev.event_type = 'reported'
+                            CASE WHEN ev.event_type = '{constants.CampaignEventsEnum.REPORTED}'
                                       AND ce.is_phishing = TRUE
                                  THEN ev.campaign_email_id END
                         )::FLOAT
