@@ -55,3 +55,29 @@ class MediaService:
                 message=MediaMessages.MEDIA_UPLOAD_ERROR,
                 error_code=ErrorCodes.MEDIA_UPLOAD_ERROR,
             )
+
+    @staticmethod
+    def delete_media(media_id, user):
+        # Fetch media by ID and user
+        media = MediaRepository.get_media_by_id(media_id)
+
+        if not media:
+            raise BadRequestException(
+                message=MediaMessages.MEDIA_NOT_FOUND,
+                error_code=ErrorCodes.NOT_FOUND,
+            )
+
+        # Check if the media belongs to the user
+        if media.user != user:
+            raise BadRequestException(
+                message=MediaMessages.UNAUTHORIZED_MEDIA,
+                error_code=ErrorCodes.UNAUTHORIZED,
+            )
+
+        # Delete from Supabase storage
+        delete_media(media.storage_path)
+
+        # Delete from DB
+        MediaRepository.delete_media(media)
+
+        return media

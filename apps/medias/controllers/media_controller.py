@@ -33,3 +33,9 @@ class MediaController(ViewSet):
             data=response_data.data,
             message=MediaMessages.MEDIA_UPLOADED,
         )
+
+    # DELETE /api/v1/medias/{media_id}
+    def delete_single_media(self, request, pk=None):
+        MediaService.delete_media(media_id=pk, user=request.user)
+
+        return ApiResponse.success(message=MediaMessages.MEDIA_DELETED)

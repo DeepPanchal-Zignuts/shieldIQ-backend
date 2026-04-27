@@ -56,6 +56,13 @@ class Users(AbstractBaseUser, PermissionsMixin):
     security_score = models.IntegerField(
         default=0,
     )
+    profile_image = models.ForeignKey(
+        "medias.Medias",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="user_profile",
+    )
 
     # JWT token
     access_token = models.TextField(null=True, blank=True)

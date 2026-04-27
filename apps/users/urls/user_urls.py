@@ -20,4 +20,12 @@ urlpatterns = [
         ),
         name="user-stats",
     ),
+    path(
+        "<uuid:pk>/",
+        UserController.as_view(
+            {"patch": "partial_update", "delete": "delete_account"},
+            permission_classes=[IsAuthenticated],
+        ),
+        name="user-update",
+    ),
 ]

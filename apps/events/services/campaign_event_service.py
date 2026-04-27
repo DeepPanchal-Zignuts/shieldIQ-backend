@@ -35,7 +35,6 @@ class CampaignEventService:
         if CampaignEventRepository.event_exists(
             campaign_email=campaign_email,
             user=user,
-            event_type=event_type,
         ):
             raise BadRequestException(
                 message=CampaignMessages.CAMPAIGN_EVENT_ALREADY_REGISTERED,

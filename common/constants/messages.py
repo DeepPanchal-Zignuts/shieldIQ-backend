@@ -51,6 +51,7 @@ class AuthMessages:
 class UserMessages:
     USER_NOT_FOUND = "Users not found"
     USER_UPDATED = "Users updated successfully"
+    USER_ACCOUNT_DELETED = "User Account Deleted Successfully"
     USER_DELETED = "Users deleted successfully"
     USER_WITH_EMAIL_ALREADY_EXISTS = "A user with this email already exists."
     EMAIL_SENDING_FAILED = "Failed to send verification email to {}"
@@ -109,7 +110,9 @@ class DashboardMeessages:
 class MediaMessages:
     MEDIA_UPLOADED = "Media uploaded successfully"
     MEDIA_NOT_FOUND = "Media not found"
+    MEDIA_DELETED = "Media deleted successfully"
     MISSING_MEDIA_OR_UPLOAD_TYPE = "Missing media file or upload type"
     FILE_TOO_LARGE = "File size exceeds the maximum allowed size"
     INVALID_UPLOAD_TYPE = "Invalid upload type"
     MEDIA_UPLOAD_ERROR = "Error in media upload"
+    UNAUTHORIZED_MEDIA = "You don't have permission to delete this media"

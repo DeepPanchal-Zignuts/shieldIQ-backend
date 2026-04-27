@@ -20,6 +20,7 @@ class Medias(models.Model):
     )
 
     file_url = models.URLField()
+    upload_type = models.CharField(max_length=50)
     file_name = models.CharField(max_length=255)
     file_type = models.CharField(max_length=50)
     file_size = models.IntegerField()
