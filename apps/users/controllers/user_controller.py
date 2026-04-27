@@ -1,6 +1,7 @@
 from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
 from apps.users.serializers.user_serializer import (
+    UpdateUserRequestSerializer,
     UserListRequestSerializer,
     UserListResponseSerializer,
     UserDetailsWithStatsResponseSerializer,
@@ -99,4 +100,23 @@ class UserController(ViewSet):
         return ApiResponse.success(
             data=response_data.data,
             message=UserMessages.USER_DASHBOARD_SUCCESS,
+        )
+
+    # PATCH /api/v1/users/{pk}/
+    def partial_update(self, request, pk=None):
+        serializer = UpdateUserRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Update the user
+        updated_user = UserService.update_user(
+            user_id=pk,
+            data=serializer.validated_data,
+        )
+
+        # Serialize the response data
+        response_data = UserProfileDetailsResponseSerializer(updated_user)
+
+        return ApiResponse.success(
+            data=response_data.data,
+            message=UserMessages.USER_UPDATED,
         )

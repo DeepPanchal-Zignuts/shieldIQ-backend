@@ -64,3 +64,20 @@ class UserService:
 
         # Return the user_stats object
         return user_stats
+
+    def update_user(user_id: UUID, data):
+        # Check if the user with the user_id exists in the database.
+        user = UserRepository.get_by_id(user_id)
+        if not user:
+            raise BadRequestException(
+                message=UserMessages.USER_NOT_FOUND,
+                error_code=ErrorCodes.NOT_FOUND,
+            )
+
+        # Update the user
+        updated_user = UserRepository.update_fields(user, **data)
+
+        # Return the updated user object
+        return {
+            "user": updated_user,
+        }

@@ -57,9 +57,27 @@ class UserListRequestSerializer(serializers.Serializer):
     )
 
 
+class UpdateUserRequestSerializer(serializers.Serializer):
+    full_name = serializers.CharField(required=False, max_length=255)
+    department = serializers.ChoiceField(
+        choices=constants.DepartmentEnum.choices,
+        required=False,
+        allow_null=True,
+    )
+    profile_image_id = serializers.UUIDField(
+        required=False,
+        allow_null=True,
+    )
+
+
 # ══════════════════════════════════════════════════════════════
 # Response Serializers (output formatting)
 # ══════════════════════════════════════════════════════════════
+
+
+class ProfileImageSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+    file_url = serializers.CharField()
 
 
 class UserResponseSerializer(serializers.Serializer):
@@ -74,6 +92,7 @@ class UserResponseSerializer(serializers.Serializer):
         choices=constants.DepartmentEnum.choices, allow_null=True
     )
     security_score = serializers.IntegerField()
+    profile_image = ProfileImageSerializer(required=False, allow_null=True)
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
     last_login_at = serializers.DateTimeField()
@@ -93,6 +112,7 @@ class AdminResponseSerializer(serializers.Serializer):
         choices=constants.DepartmentEnum.choices, allow_null=True
     )
     security_score = serializers.IntegerField()
+    profile_image = ProfileImageSerializer(required=False, allow_null=True)
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
     last_login_at = serializers.DateTimeField()
