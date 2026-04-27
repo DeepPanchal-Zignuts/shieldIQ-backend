@@ -5,6 +5,7 @@ from rest_framework.viewsets import ViewSet
 from apps.campaigns.serializers.campaign_serializer import (
     CreateCampaignEmailRequestSerializer,
     CreateCampaignEmailResponseSerializer,
+    UserSimulationEmailSerializer,
 )
 from apps.campaigns.services.campaign_email_service import CampaignEmailService
 from common.constants.messages import CampaignMessages
@@ -40,4 +41,32 @@ class CampaignEmailController(ViewSet):
         return ApiResponse.created(
             data=response_data.data,
             message=CampaignMessages.CAMPAIGN_EMAIL_CREATED,
+        )
+
+    # GET /api/v1/users/simulation/
+    def list(self, request):
+        filters = {
+            "search": request.query_params.get("search"),
+            "page": int(request.query_params.get("page", 1)),
+            "page_size": int(request.query_params.get("page_size", 10)),
+            "ordering": request.query_params.get("ordering", "-created_at"),
+        }
+
+        # Fetch all the simulation mails
+        simulation_mails = CampaignEmailService.get_user_campaign_emails(
+            user_id=request.user.id,
+            filters=filters,
+        )
+
+        # Serialize the response data
+        response_data = UserSimulationEmailSerializer(
+            simulation_mails["results"], many=True
+        )
+
+        return ApiResponse.success(
+            data={
+                "count": simulation_mails["count"],
+                "results": response_data.data,
+            },
+            message=CampaignMessages.SIMULATION_MAILS_FETCHED,
         )

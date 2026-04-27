@@ -1,10 +1,8 @@
-import jwt
 from rest_framework.authentication import BaseAuthentication
 from common.exceptions.custom_exceptions import (
     UnauthorizedException,
-    BadRequestException,
 )
-from common.constants.messages import AuthMessages, PermissionMessages, UserMessages
+from common.constants.messages import AuthMessages, PermissionMessages
 from common.constants.error_code import ErrorCodes
 from config import settings
 from utils.token_utils import verify_token
@@ -34,7 +32,7 @@ class JWTAuthentication(BaseAuthentication):
         # 3. Verify token
         decoded_token_data = verify_token(raw_token, settings.ACCESS_SECRET_KEY)
         if not decoded_token_data["valid"]:
-            raise BadRequestException(
+            raise UnauthorizedException(
                 message=decoded_token_data["error"],
                 error_code=ErrorCodes.INVALID_TOKEN,
             )

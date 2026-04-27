@@ -1,5 +1,12 @@
 from django.db import models
 
+from config import settings
+
+# Score constants
+PHISHING_CLICK_PENALTY = -15  # Fell for phishing email
+PHISHING_REPORT_REWARD = +10  # Correctly identified phishing
+FALSE_POSITIVE_PENALTY = 0  # Reported a safe email — no change
+
 
 class DepartmentEnum(models.TextChoices):
     """Departments within the organization."""
@@ -43,4 +50,28 @@ CAMPAIGN_EVENT_MESSAGES = {
     CampaignEventsEnum.OPENED: "You opened an email",
     CampaignEventsEnum.LINK_CLICKED: "You clicked a malicious link",
     CampaignEventsEnum.REPORTED: "You reported a phishing email",
+}
+
+
+class FileType:
+    IMAGE = "image"
+    VIDEO = "video"
+    AUDIO = "audio"
+
+
+class UploadType:
+    PROFILE_IMAGE = "profile_image"
+    EMAIL_ATTACHMENT_IMAGE = "email_attachment_image"
+
+
+# Validation Rules Mapping
+UPLOAD_RULES = {
+    UploadType.PROFILE_IMAGE: {
+        "max_size": settings.FILE_SIZE_LIMIT,
+        "allowed_types": ["jpeg", "jpg", "png", "gif"],
+    },
+    UploadType.EMAIL_ATTACHMENT_IMAGE: {
+        "max_size": 10 * 1024 * 1024,
+        "allowed_types": ["jpeg", "jpg", "png", "gif"],
+    },
 }

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "apps.users.apps.UsersConfig",
     "apps.campaigns.apps.CampaignsConfig",
     "apps.events.apps.EventsConfig",
+    "apps.medias.apps.MediaConfig",
 ]
 
 MIDDLEWARE = [
@@ -102,6 +103,12 @@ DATABASES = {
     }
 }
 
+# Supabase for media upload
+SUPABASE_PROJECT_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_SECRET_KEY = os.environ.get("SUPABASE_KEY")
+SUPABASE_STORAGE_BUCKET = os.environ.get("SUPABASE_BUCKET")
+FILE_SIZE_LIMIT = 50 * 1024 * 1024  # 50MB
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -144,9 +151,7 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 # ──────────────────────────────────────────────────────────────
 # CORS Configuration
 # ──────────────────────────────────────────────────────────────
-CORS_ALLOWED_ORIGINS = [
-   FRONTEND_URL
-]
+CORS_ALLOWED_ORIGINS = [FRONTEND_URL]
 CORS_ALLOW_CREDENTIALS = True
 
 

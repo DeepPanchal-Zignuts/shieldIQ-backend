@@ -36,14 +36,20 @@ class CreateCampaignRequestSerializer(serializers.Serializer):
 
 class UpdateCampaignRequestSerializer(serializers.Serializer):
     title = serializers.CharField(required=False, max_length=155)
-    description = serializers.CharField(required=False, min_length=3, max_length=255, allow_blank=True)
+    description = serializers.CharField(
+        required=False, min_length=3, max_length=255, allow_blank=True
+    )
     start_date = serializers.DateField(required=False)
     end_date = serializers.DateField(required=False)
     target_departments = serializers.ListField(
         child=serializers.CharField(), required=False
     )
-    email_type = serializers.ChoiceField(choices=constants.CampaignEmailsEnum.choices, required=False)
-    status = serializers.ChoiceField(choices=constants.CampaignStatusEnum.choices, required=False)
+    email_type = serializers.ChoiceField(
+        choices=constants.CampaignEmailsEnum.choices, required=False
+    )
+    status = serializers.ChoiceField(
+        choices=constants.CampaignStatusEnum.choices, required=False
+    )
 
     def validate(self, attrs):
         start_date = attrs.get("start_date")
@@ -159,3 +165,16 @@ class GetCampaignResponseSerializer(serializers.Serializer):
 
 class DashboardResponseSerializer(serializers.Serializer):
     stats = CampaignStatsSerializer()
+
+
+class UserSimulationEmailSerializer(serializers.Serializer):
+
+    id = serializers.UUIDField()
+    sender = serializers.CharField()
+    from_email = serializers.EmailField()
+    subject = serializers.CharField()
+    body = serializers.CharField()
+    link_text = serializers.CharField()
+    created_at = serializers.DateTimeField()
+    updated_at = serializers.DateTimeField()
+    campaign_id = serializers.UUIDField()

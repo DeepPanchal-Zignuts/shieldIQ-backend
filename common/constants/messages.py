@@ -95,6 +95,7 @@ class CampaignMessages:
     # Campaigns emails
     CAMPAIGN_EMAIL_CREATED = "Campaigns email created successfully"
     CAMPAIGN_EMAIL_NOT_FOUND = "Campaigns email not found"
+    SIMULATION_MAILS_FETCHED = "Simulation emails fetched successfully"
 
     # Campaigns events
     CAMPAIGN_EVENT_CREATED = "Campaigns event created successfully"
@@ -103,3 +104,12 @@ class CampaignMessages:
 
 class DashboardMeessages:
     DASHBOARD_DATA_FETCHED = "Dashboard data fetched successfully"
+
+
+class MediaMessages:
+    MEDIA_UPLOADED = "Media uploaded successfully"
+    MEDIA_NOT_FOUND = "Media not found"
+    MISSING_MEDIA_OR_UPLOAD_TYPE = "Missing media file or upload type"
+    FILE_TOO_LARGE = "File size exceeds the maximum allowed size"
+    INVALID_UPLOAD_TYPE = "Invalid upload type"
+    MEDIA_UPLOAD_ERROR = "Error in media upload"
