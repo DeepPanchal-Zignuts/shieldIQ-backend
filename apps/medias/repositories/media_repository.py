@@ -1,6 +1,7 @@
 # apps/medias/repositories/media_repository.py
 
 from apps.medias.models.media_model import Medias
+from utils import date_utils
 
 
 class MediaRepository:
@@ -16,3 +17,9 @@ class MediaRepository:
     @staticmethod
     def get_media_by_id(media_id):
         return Medias.objects.filter(id=media_id).first()
+
+    @staticmethod
+    def delete_media(media):
+        media.is_deleted = True
+        media.deleted_at = date_utils.get_now()
+        media.save()

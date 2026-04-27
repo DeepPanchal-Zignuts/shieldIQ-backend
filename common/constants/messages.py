@@ -109,7 +109,9 @@ class DashboardMeessages:
 class MediaMessages:
     MEDIA_UPLOADED = "Media uploaded successfully"
     MEDIA_NOT_FOUND = "Media not found"
+    MEDIA_DELETED = "Media deleted successfully"
     MISSING_MEDIA_OR_UPLOAD_TYPE = "Missing media file or upload type"
     FILE_TOO_LARGE = "File size exceeds the maximum allowed size"
     INVALID_UPLOAD_TYPE = "Invalid upload type"
     MEDIA_UPLOAD_ERROR = "Error in media upload"
+    UNAUTHORIZED_MEDIA = "You don't have permission to delete this media"
