@@ -13,7 +13,7 @@ from common.responses.api_response import ApiResponse
 
 
 class CampaignEmailController(ViewSet):
-    # GET /api/v1/campaigns/{campaign_id}/emails/
+    # POST /api/v1/campaigns/{campaign_id}/emails/
     @action(
         detail=True,
         methods=["post"],

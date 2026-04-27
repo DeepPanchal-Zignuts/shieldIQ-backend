@@ -143,7 +143,15 @@ class CampaignRepository:
 
         # 🔹 Data Query
         data_sql = f"""
-            SELECT CE.*
+            SELECT CE.*,
+            EXISTS (
+                SELECT 1
+                FROM CAMPAIGN_EVENTS CEV
+                WHERE 
+                    CEV.CAMPAIGN_EMAIL_ID = CE.ID
+                    AND CEV.USER_ID = %s
+                    AND CEV.IS_DELETED = FALSE
+            ) AS is_user_interacted
             FROM CAMPAIGNS C
             LEFT JOIN CAMPAIGN_EMAILS CE ON CE.CAMPAIGN_ID = C.ID
             LEFT JOIN USERS U ON C.TARGET_DEPARTMENTS ? U.DEPARTMENT
@@ -163,7 +171,7 @@ class CampaignRepository:
             total_count = cursor.fetchone()[0]
 
             # Data
-            cursor.execute(data_sql, params + [page_size, offset])
+            cursor.execute(data_sql, [str(user_id)] + params + [page_size, offset])
             columns = [col.name for col in cursor.description]
             rows = cursor.fetchall()
 

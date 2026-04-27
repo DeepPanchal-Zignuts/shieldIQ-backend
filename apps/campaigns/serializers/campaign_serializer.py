@@ -178,3 +178,4 @@ class UserSimulationEmailSerializer(serializers.Serializer):
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
     campaign_id = serializers.UUIDField()
+    is_user_interacted = serializers.BooleanField()

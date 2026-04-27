@@ -8,10 +8,9 @@ class CampaignEventRepository:
         return CampaignEvents.objects.create(**data)
 
     @staticmethod
-    def event_exists(campaign_email, user, event_type):
+    def event_exists(campaign_email, user):
         return CampaignEvents.objects.filter(
             campaign_email=campaign_email,
             user=user,
-            event_type=event_type,
             is_deleted=False,
         ).exists()

@@ -34,7 +34,7 @@ class CampaignStatsService:
             return 0.0
 
         total = sum(u["user_total_impact"] for u in per_user_scores)
-        return round(total / per_user_scores.count(), 2)
+        return max(0.0, round(total / per_user_scores.count(), 2))
 
     # ──────────────────────────────────────────────
     # 2. CLICK RATE
@@ -228,7 +228,7 @@ class CampaignStatsService:
             return 0.0
 
         total = sum(u["user_total_impact"] for u in per_user_scores)
-        return round(total / per_user_scores.count(), 2)
+        return max(0.0, round(total / per_user_scores.count(), 2))
 
     @staticmethod
     def get_dashboard_click_rate() -> float:

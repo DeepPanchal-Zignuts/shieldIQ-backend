@@ -265,4 +265,8 @@ class UserRepository(BaseRepository):
     def delete_user(cls, user):
         user.is_deleted = True
         user.deleted_at = date_utils.get_now()
-        user.save(update_fields=["is_deleted", "deleted_at"])
+        user.is_active = False
+        user.is_email_verified = False
+        user.save(
+            update_fields=["is_deleted", "deleted_at", "is_active", "is_email_verified"]
+        )
